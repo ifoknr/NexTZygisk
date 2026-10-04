@@ -1,4 +1,4 @@
-<div class="panel nz">
+<div class="panel nz nz_home">
   <div class="nz_header">
     <div>
       <div class="nz_header_title">NextZygisk</div>
@@ -21,19 +21,41 @@
       <div id="home_status_sub" class="nz_hero_sub">&nbsp;</div>
       <div id="home_status_pills" class="nz_hero_pills"></div>
     </div>
+    <!-- INFO: Only shown on wide screens -->
+    <div id="home_hero_stats" class="nz_hero_stats"></div>
   </div>
 
   <div id="home_issues"></div>
 
-  <div id="home_components_title" class="nz_section">{{components.title}}</div>
-  <div id="home_components" class="nz_grid"></div>
+  <!-- INFO: One column on phones, two columns on tablets -->
+  <div class="nz_cols">
+    <div class="nz_col">
+      <div id="home_components_title" class="nz_section">{{components.title}}</div>
+      <div id="home_components" class="nz_grid"></div>
 
-  <div class="nz_section">{{hiding.title}}</div>
-  <div id="home_hiding" class="nz_grid"></div>
+      <div class="nz_section">{{hiding.title}}</div>
+      <div id="home_hiding" class="nz_grid"></div>
 
-  <div class="nz_section">
-    <span>{{device.title}}</span>
-    <span id="home_copy_device" class="nz_section_action">{{copy}}</span>
+      <div class="nz_wide_only">
+        <div class="nz_section">
+          <span>{{components.modules}}</span>
+          <span id="home_modules_all" class="nz_section_action">{{components.viewAll}}</span>
+        </div>
+        <div id="home_modules" class="nz_card nz_home_modules"></div>
+      </div>
+    </div>
+
+    <div class="nz_col">
+      <div class="nz_section">
+        <span>{{device.title}}</span>
+        <span id="home_copy_device" class="nz_section_action">{{copy}}</span>
+      </div>
+      <div id="home_device" class="nz_card"></div>
+
+      <div class="nz_wide_only">
+        <div id="home_tools_title" class="nz_section">&nbsp;</div>
+        <div id="home_tools" class="nz_grid"></div>
+      </div>
+    </div>
   </div>
-  <div id="home_device" class="nz_card"></div>
 </div>

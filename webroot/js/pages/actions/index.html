@@ -23,28 +23,35 @@
     </div>
   </div>
 
-  <!-- INFO: Root unmount -->
-  <div class="nz_section">{{umount.section}}</div>
-  <div class="nz_card">
-    <div style="display: flex; align-items: center; justify-content: space-between; gap: 14px;">
-      <div style="min-width: 0;">
-        <div style="font-size: 16px; font-weight: 600;">{{umount.title}}</div>
-        <div id="umount_desc" class="nz_header_sub" style="margin-top: 4px; line-height: 1.45;">{{umount.on}}</div>
+  <!-- INFO: One column on phones, two columns on tablets -->
+  <div class="nz_cols">
+    <div class="nz_col">
+      <!-- INFO: Root unmount -->
+      <div class="nz_section">{{umount.section}}</div>
+      <div class="nz_card">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 14px;">
+          <div style="min-width: 0;">
+            <div style="font-size: 16px; font-weight: 600;">{{umount.title}}</div>
+            <div id="umount_desc" class="nz_header_sub" style="margin-top: 4px; line-height: 1.45;">{{umount.on}}</div>
+          </div>
+          <label class="nz_switch"><input id="umount_switch" type="checkbox" checked><span></span></label>
+        </div>
       </div>
-      <label class="nz_switch"><input id="umount_switch" type="checkbox" checked><span></span></label>
+
+      <!-- INFO: Daemon info -->
+      <div class="nz_section">
+        <span>{{daemon.title}}</span>
+        <span id="daemon_run" class="nz_section_action">{{daemon.run}}</span>
+      </div>
+      <div class="nz_card">
+        <div id="daemon_output" class="nz_header_sub" style="margin: 0;">{{daemon.description}}</div>
+      </div>
+    </div>
+
+    <div class="nz_col">
+      <!-- INFO: Tools -->
+      <div class="nz_section">{{tools.title}}</div>
+      <div id="actions_tools" class="nz_grid"></div>
     </div>
   </div>
-
-  <!-- INFO: Daemon info -->
-  <div class="nz_section">
-    <span>{{daemon.title}}</span>
-    <span id="daemon_run" class="nz_section_action">{{daemon.run}}</span>
-  </div>
-  <div class="nz_card">
-    <div id="daemon_output" class="nz_header_sub" style="margin: 0;">{{daemon.description}}</div>
-  </div>
-
-  <!-- INFO: Tools -->
-  <div class="nz_section">{{tools.title}}</div>
-  <div id="actions_tools" class="nz_grid"></div>
 </div>

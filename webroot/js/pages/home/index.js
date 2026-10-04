@@ -2,6 +2,7 @@ import { whichCurrentPage } from '../navbar.js'
 import { getStrings, loadPage } from '../pageLoader.js'
 import utils from '../utils.js'
 import { icon } from '../../icons.js'
+import { runTool, toolsHTML } from '../../tools.js'
 import {
   MONITOR_STATE,
   copyText,
@@ -105,6 +106,83 @@ function renderHero(summary, status, strings) {
   if (summary.known) pills.push(`<span class="nz_pill nz_pill_muted">${escapeHTML(modulesText(summary.modules.length, strings))}</span>`)
 
   document.getElementById('home_status_pills').innerHTML = pills.join('')
+}
+
+const STATUS_TONE = {
+  working: 'ok',
+  partial: 'warn',
+  notLoaded: 'err',
+  disabled: 'muted',
+  removal: 'err',
+  pending: 'warn',
+  unknown: 'muted'
+}
+
+function hueOf(text) {
+  let hash = 0
+  for (let i = 0; i < text.length; i++) hash = (hash * 31 + text.charCodeAt(i)) | 0
+
+  return Math.abs(hash) % 360
+}
+
+/* INFO: Wide screens only (hidden by CSS on phones). */
+function renderHeroStats(summary, strings) {
+  const container = document.getElementById('home_hero_stats')
+  if (!container) return
+
+  if (!summary.known) {
+    container.innerHTML = ''
+
+    return
+  }
+
+  const installed = zygiskModules ? zygiskModules.filter((mod) => mod.status !== 'disabled' && mod.status !== 'removal') : null
+  const working = installed ? installed.filter((mod) => mod.status === 'working').length : summary.modules.length
+
+  const stats = [
+    [ strings.hero.zygotes, `${summary.working} / ${summary.expected}` ],
+    [ strings.components.modules, installed ? `${working} / ${installed.length}` : String(working) ],
+    [ strings.device.uptime, lastDevice.uptime ? formatDuration(lastDevice.uptime, strings) : null ]
+  ].filter(([ , value ]) => value)
+
+  container.innerHTML = stats.map(([ label, value ]) => `
+    <div class="nz_hero_stat">
+      <div class="nz_hero_stat_value" dir="ltr">${escapeHTML(value)}</div>
+      <div class="nz_hero_stat_label">${escapeHTML(label)}</div>
+    </div>
+  `).join('')
+}
+
+function renderModulesOverview(modStrings) {
+  const container = document.getElementById('home_modules')
+  if (!container || !modStrings || zygiskModules === null) return
+
+  if (zygiskModules.length === 0) {
+    container.innerHTML = `
+      <div class="nz_home_module_empty">
+        <div class="nz_module_name">${escapeHTML(modStrings.notAvaliable)}</div>
+        <div class="nz_module_meta" style="white-space: normal;">${escapeHTML(modStrings.emptyHint)}</div>
+      </div>
+    `
+
+    return
+  }
+
+  container.innerHTML = zygiskModules.map((mod) => {
+    const tone = STATUS_TONE[mod.status] || 'muted'
+    const faded = mod.status === 'disabled' || mod.status === 'removal'
+
+    return `
+      <div class="nz_home_module" data-action="modules">
+        <div class="nz_avatar" style="--hue: ${hueOf(mod.id)};${faded ? ' filter: grayscale(1); opacity: 0.6;' : ''}">${escapeHTML(mod.name.trim().charAt(0).toUpperCase() || '?')}</div>
+        <div class="nz_module_body">
+          <div class="nz_module_name">${escapeHTML(mod.name)}</div>
+          <div class="nz_module_meta nz_mono"><bdi>${escapeHTML(mod.id)}</bdi></div>
+        </div>
+        <span class="nz_pill nz_pill_${tone}" style="flex-shrink: 0;"><span class="nz_dot ${tone === 'muted' ? '' : `nz_dot_${tone}`}"></span>${escapeHTML(modStrings.status[mod.status] || mod.status)}</span>
+      </div>
+    `
+  }).join('')
 }
 
 function renderIssues(summary, strings) {
@@ -286,7 +364,7 @@ function renderDevice(strings) {
   container.innerHTML = rows.map(([ label, value ]) => `
     <div class="nz_row">
       <div class="nz_row_label">${escapeHTML(label)}</div>
-      <div class="nz_row_value" data-copy="${escapeHTML(value)}">${escapeHTML(value)}</div>
+      <div class="nz_row_value" data-copy="${escapeHTML(value)}"><bdi>${escapeHTML(value)}</bdi></div>
     </div>
   `).join('') || `<div class="nz_row"><div class="nz_row_label">${escapeHTML(strings.unknown)}</div></div>`
 }
@@ -306,9 +384,10 @@ async function refresh({ full = false } = {}) {
   if (button) button.classList.add('nz_spin')
 
   try {
-    const [ state, strings ] = await Promise.all([
+    const [ state, strings, modStrings ] = await Promise.all([
       getState(),
       getStrings('home'),
+      getStrings('modules'),
       full ? getDeviceInfo().then((info) => { lastDevice = info }) : null,
       full || !lastVersion ? getModuleProp().then((prop) => { lastVersion = prop.version || null }) : null,
       full || installedModules === null ? getInstalledModules().then((mods) => { installedModules = mods }) : null,
@@ -327,6 +406,8 @@ async function refresh({ full = false } = {}) {
     renderIssues(summary, strings)
     renderComponents(summary, strings)
     renderHiding(summary, strings)
+    renderHeroStats(summary, strings)
+    renderModulesOverview(modStrings)
     if (full) renderDevice(strings)
 
     lastUpdate = Date.now()
@@ -386,6 +467,30 @@ export async function load() {
     haptic()
     loadPage('modules')
   })
+
+  utils.addListener(document.getElementById('home_modules'), 'click', (event) => {
+    if (!event.target.closest('[data-action]')) return
+
+    haptic()
+    loadPage('modules')
+  })
+
+  utils.addListener(document.getElementById('home_modules_all'), 'click', () => {
+    haptic()
+    loadPage('modules')
+  })
+
+  /* INFO: Quick tools, only visible on wide screens. */
+  const actionStrings = await getStrings('actions')
+  if (actionStrings) {
+    document.getElementById('home_tools_title').textContent = actionStrings.tools.title
+    document.getElementById('home_tools').innerHTML = toolsHTML(actionStrings, [ 'logs', 'export', 'copyState', 'restart' ])
+
+    utils.addListener(document.getElementById('home_tools'), 'click', (event) => {
+      const tool = event.target.closest('[data-tool]')?.getAttribute('data-tool')
+      if (tool) runTool(tool, actionStrings)
+    })
+  }
 
   utils.addListener(document.getElementById('home_device'), 'click', (event) => {
     const value = event.target.closest('[data-copy]')?.getAttribute('data-copy')

@@ -27,7 +27,8 @@
         "injected": "{working} of {expected} Zygotes injected",
         "module": "1 module",
         "modules": "{count} modules",
-        "noState": "No state reported yet. The monitor may not be running."
+        "noState": "No state reported yet. The monitor may not be running.",
+        "zygotes": "Zygotes"
       },
       "issues": {
         "monitor": "Monitor is not tracing",
