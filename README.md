@@ -19,6 +19,9 @@
 
 It is a fork of [ReZygisk](https://github.com/PerformanC/ReZygisk) by The PerformanC Organization, focused on three things: **faster app launches**, **robustness** and **accurate hiding**, with a modern dashboard you open straight from your root manager.
 
+> [!WARNING]
+> **Personal project, use at your own risk.** NextZygisk is developed and tested on the developer's own devices first. It runs as root inside Zygote, and a broken build can stop your phone from booting properly. Keep a way to remove modules (safe mode or your root manager's recovery options) before installing it.
+
 > [!NOTE]
 > NextZygisk keeps ReZygisk's module ID (`rezygisk`). It installs over an existing ReZygisk as an update, and modules that require ReZygisk (such as Treat Wheel) keep working.
 
