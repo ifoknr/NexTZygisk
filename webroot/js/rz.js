@@ -420,7 +420,7 @@ export async function monitorControl(command) {
            name or ID since their IDs differ between forks. `zygisk` marks modules
            that must be loaded by NextZygisk to do their job. */
 export const HIDING_MODULES = [
-  { key: 'treatwheel', label: 'Treat Wheel', match: /treat[\s_-]*wheel/i, zygisk: true },
+  { key: 'treatwheel', label: 'Treat Wheel', match: /treat[\s_-]*wheel|next[\s_-]*wheel/i, zygisk: true },
   { key: 'shamiko', label: 'Shamiko', match: /shamiko/i, zygisk: true },
   { key: 'assistant', label: 'Zygisk Assistant', match: /zygisk[\s_-]*assistant/i, zygisk: true },
   { key: 'nohello', label: 'NoHello', match: /no[\s_-]*hello/i, zygisk: true },
@@ -429,19 +429,23 @@ export const HIDING_MODULES = [
   { key: 'susfs', label: 'SUSFS', match: /susfs/i, zygisk: false }
 ]
 
-/* INFO: Lists every installed module (id, name, enabled) in one exec. */
+/* INFO: Lists every installed module in one exec. A module deleted from the root manager
+           keeps its folder, with a "remove" file, until the next boot; one flashed again
+           before that boot waits in modules_update and replaces it at boot, so a delete
+           followed by a re-flash without rebooting brings the module back. */
 export async function getInstalledModules() {
   const result = await run(
     'for d in /data/adb/modules/*/; do [ -f "$d/module.prop" ] || continue; ' +
-    'i=${d%/}; i=${i##*/}; s=1; [ -f "$d/disable" ] && s=0; [ -f "$d/remove" ] && s=0; ' +
-    'n=$(grep -m1 "^name=" "$d/module.prop" | cut -d= -f2-); echo "$i|$s|$n"; done'
+    'i=${d%/}; i=${i##*/}; s=1; r=0; u=0; [ -f "$d/disable" ] && s=0; [ -f "$d/remove" ] && { s=0; r=1; }; ' +
+    '[ -d "/data/adb/modules_update/$i" ] && u=1; ' +
+    'n=$(grep -m1 "^name=" "$d/module.prop" | cut -d= -f2-); echo "$i|$s|$r|$u|$n"; done'
   )
 
   return result.stdout.split('\n').map((line) => {
-    const [ id, enabled, ...name ] = line.split('|')
+    const [ id, enabled, removed, update, ...name ] = line.split('|')
     if (!id || !isSafeModuleId(id)) return null
 
-    return { id, enabled: enabled === '1', name: name.join('|').trim() || id }
+    return { id, enabled: enabled === '1', removed: removed === '1', update: update === '1', name: name.join('|').trim() || id }
   }).filter(Boolean)
 }
 
@@ -452,7 +456,7 @@ export function detectHidingModules(installed, loadedIds = []) {
     const mod = installed.find((m) => known.match.test(m.name) || known.match.test(m.id))
     if (!mod) continue
 
-    found.push({ ...known, id: mod.id, name: mod.name, enabled: mod.enabled, loaded: loadedIds.includes(mod.id) })
+    found.push({ ...known, id: mod.id, name: mod.name, enabled: mod.enabled, removed: mod.removed, update: mod.update, loaded: loadedIds.includes(mod.id) })
   }
 
   return found

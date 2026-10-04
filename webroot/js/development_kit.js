@@ -83,8 +83,9 @@ const responses = [
     '@@MODULE new_module', 'id=new_module\nname=Freshly Installed\nversion=v1.0\nauthor=dev', '@@update=1', '@@libs=arm64-v8a.so'
   ].join('\n') ],
   [ /^for d in \/data\/adb\/modules/, () => [
-    'playintegrityfix|1|Play Integrity Fix', 'zygisk_lsposed|1|LSPosed', 'shamiko|0|Shamiko',
-    'treat_wheel|1|Treat Wheel', 'tricky_store|1|Tricky Store', 'rezygisk|1|NextZygisk'
+    /* INFO: id|enabled|removed|update|name */
+    'playintegrityfix|1|0|0|Play Integrity Fix', 'zygisk_lsposed|1|0|0|LSPosed', 'shamiko|0|0|0|Shamiko',
+    'treat_wheel|1|0|0|NextWheel', 'tricky_store|1|0|0|Tricky Store', 'rezygisk|1|0|0|NextZygisk'
   ].join('\n') ],
   [ /^for b in .*zygisk-ptrace64/, () => '/data/adb/modules/rezygisk/bin/zygisk-ptrace64' ],
   [ / info 2>&1 \| tail/, () => '# zygisk-ptrace64\nDaemon process PID: 1290\nRoot implementation: KernelSU\nModules: 3\n - Play Integrity Fix\n - LSPosed\n - Shamiko\n\n# zygisk-ptrace32\nDaemon process PID: 1291\nRoot implementation: KernelSU\nModules: 2\n - Play Integrity Fix\n - LSPosed' ],

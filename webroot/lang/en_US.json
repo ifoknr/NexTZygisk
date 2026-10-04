@@ -58,6 +58,12 @@
         "disabled": "Disabled",
         "none": "No hiding module detected",
         "noneHint": "Root hiding modules such as Treat Wheel, Shamiko or Zygisk Assistant will show up here with their live status.",
+        "activeUntilRestart": "Active until restart",
+        "removed": "Removed",
+        "removedHint": "Removed, but still loaded. Restart to unload it.",
+        "disabledHint": "Disabled, but still loaded. Restart to unload it.",
+        "updateHint": "An update is waiting and will be installed at restart.",
+        "reinstallHint": "A newer copy is waiting and will reinstall it at restart. Remove it again after restarting.",
         "roles": {
           "treatwheel": "Hides the Zygisk and root environment",
           "shamiko": "Hides root and Zygisk",

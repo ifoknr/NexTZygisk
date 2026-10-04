@@ -231,20 +231,33 @@ function renderHiding(summary, strings) {
   container.innerHTML = found.map((mod) => {
     let value = strings.hiding.enabled
     let tone = 'ok'
+    let hint = strings.hiding.roles[mod.key]
 
-    if (!mod.enabled) {
-      value = strings.hiding.disabled
-      tone = ''
+    if (mod.removed || !mod.enabled) {
+      /* INFO: Zygisk modules are loaded into Zygote at boot. Removing or disabling one
+                 only takes effect after a restart, so until then it keeps running. */
+      if (mod.loaded) {
+        value = strings.hiding.activeUntilRestart
+        tone = 'warn'
+        hint = mod.removed ? strings.hiding.removedHint : strings.hiding.disabledHint
+      } else {
+        value = mod.removed ? strings.hiding.removed : strings.hiding.disabled
+        tone = ''
+      }
     } else if (mod.zygisk && summary.known) {
       /* INFO: A Zygisk based hider that NextZygisk did not load is not protecting anything. */
       value = mod.loaded ? strings.hiding.active : strings.hiding.notLoaded
       tone = mod.loaded ? 'ok' : 'warn'
     }
 
+    /* INFO: A copy flashed after removing it waits in modules_update and is installed at
+               the next boot, which undoes the removal. Say so instead of hiding it. */
+    if (mod.update) hint = mod.removed ? strings.hiding.reinstallHint : strings.hiding.updateHint
+
     return tile({
-      label: mod.label,
+      label: mod.name || mod.label,
       value,
-      hint: strings.hiding.roles[mod.key],
+      hint,
       tone,
       iconName: 'shield',
       action: 'modules'
