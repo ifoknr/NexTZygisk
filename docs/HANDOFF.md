@@ -2,8 +2,8 @@
 
 Read this first when you continue the project from a new session or another account. It records where the project stands, why things are the way they are, and what is left.
 
-> **ملخص بالعربي:** NextZygisk فورك من ReZygisk. كل الشغل مدموج في `main` (PR #1 و PR #2)، والبناء ينجح على GitHub لكل المعماريات، **لكن ما تجرّب على جهاز حقيقي بعد**. أهم الخطوات الجاية:
-> 1. تجربة على جهاز.
+> **ملخص بالعربي:** NextZygisk فورك من ReZygisk. كل الشغل مدموج في `main` (PR #1 و PR #2)، والبناء ينجح على GitHub لكل المعماريات. أول تجربة على جهاز حقيقي نجحت: Galaxy Tab S10 Ultra مع KernelSU، والحالة "يعمل" و Treat Wheel نشط. أهم الخطوات الجاية:
+> 1. تجربة الإخفاء بالتفصيل وزر Action وأجهزة ثانية.
 > 2. نشر أول إصدار من Actions ← Release.
 > 3. فورك Treat Wheel في مستودع منفصل وربطه بعقد مشترك.
 >
@@ -19,7 +19,7 @@ Read this first when you continue the project from a new session or another acco
 | Work branch | `claude/performance-updates-review-i6y5sj` (PRs [#1](https://github.com/ifoknr/NexTZygisk/pull/1) and [#2](https://github.com/ifoknr/NexTZygisk/pull/2), both merged) |
 | CI | `ci.yml` (Untrusted CI) builds every ABI, release and debug. Last runs: green. |
 | Releases | `release.yml` is ready, but no release has been published yet. |
-| Device testing | **None yet.** Everything was verified by CI builds, host compile checks, unit harnesses and browser tests of the WebUI. |
+| Device testing | **First pass OK.** Samsung Galaxy Tab S10 Ultra (SM-X926B), Android 14, KernelSU, build 566 (`56c8a1f`): Working, Zygote64 injected, 3/3 Zygisk modules working, Treat Wheel active. Not yet checked: hiding against real detector apps, the Action button, Magisk and APatch, and 32-bit Zygote devices. |
 | Treat Wheel fork | [ifoknr/NextWheel](https://github.com/ifoknr/NextWheel) exists (Treat Wheel v0.0.11). The owner wants the Treat Wheel fork kept in a **separate repository**. |
 
 ## 2. Decisions to keep (and why)
@@ -85,6 +85,12 @@ Read this first when you continue the project from a new session or another acco
   - `actions` (monitor, root-unmount switch, daemon query, tools);
   - `actions/minipage/logs` (live logcat with filters);
   - `settings`, plus the `theme` and `language` minipages.
+- Wide screens (760px and up, `components.css`):
+  - two columns (`.nz_cols`), with Home adding a modules overview and quick tools (`.nz_wide_only`);
+  - the hero stats move beside the status from 880px;
+  - phones keep the single-column layout.
+- `js/tools.js`: the tools shared by Actions and Home. Mini pages belong to their parent page, so Home opens Actions before Live logs.
+- The `/TreatWheel/language` storage key comes from upstream's "Treat Wheel Framework" page loader. It is unrelated to the hiding module; leave it.
 - `pageLoader.js`:
   - missing translation keys fall back to `en_US` (`deepMerge`), and language files are cached;
   - the first load no longer calls `history.back()`;
@@ -137,11 +143,11 @@ Read this first when you continue the project from a new session or another acco
 
 ## 7. What's next
 
-1. **Device test.** Install the latest `NextZygisk-…-release.zip` from Actions. Check:
-   - Home shows Working, and both Zygotes are injected;
-   - the Modules page statuses;
+1. **More device tests.** The first run on a tablet passed (see the table above). Still to check:
+   - hiding, with an app on the denylist and with Treat Wheel;
    - the Action button output;
-   - hiding, with an app on the denylist and with Treat Wheel.
+   - a phone with a 32-bit Zygote, plus Magisk and APatch;
+   - the tablet layout (two columns from 760px) on the real tablet.
 
    On any problem, use WebUI → Actions → Export diagnostics, which saves to `Download/NextZygisk/`.
 2. **First release.** Actions → Release → Run workflow. It is a pre-release until the device tests pass.
