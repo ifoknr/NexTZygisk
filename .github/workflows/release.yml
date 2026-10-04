@@ -1,0 +1,99 @@
+name: Release
+
+# INFO: Publishes a GitHub Release with the release and debug zips.
+#         - Actions > Release > Run workflow (on main), or
+#         - push a tag named v* (for example: git tag v1.0.0 && git push origin v1.0.0)
+on:
+  workflow_dispatch:
+    inputs:
+      prerelease:
+        description: "Mark as pre-release (not yet tested on devices)"
+        type: boolean
+        default: true
+  push:
+    tags: [ "v*" ]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: "recursive"
+          fetch-depth: 0
+
+      - name: Setup keys
+        env:
+          private_key: ${{ secrets.ORG_PRIVATE_KEY }}
+          public_key: ${{ secrets.ORG_PUBLIC_KEY }}
+        run: |
+          if [ -z "$private_key" ] || [ -z "$public_key" ]; then
+            echo "Signing keys are not set, building unsigned zips."
+          else
+            echo "$private_key" | base64 -d > module/private_key
+            echo "$public_key" | base64 -d > module/public_key
+          fi
+
+      - name: Setup NDK_PATH
+        run: echo "NDK_PATH=$ANDROID_NDK_LATEST_HOME" >> $GITHUB_ENV
+
+      - name: Build
+        run: make all -j$(nproc)
+
+      - name: Collect version
+        id: version
+        run: |
+          VER_NAME=$(sed -n 's/^VER_NAME ?= //p' common.mk)
+          VER_CODE=$(git rev-list HEAD --count)
+          COMMIT=$(git rev-parse --short HEAD)
+
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            TAG="${GITHUB_REF_NAME}"
+            PRERELEASE=false
+          else
+            TAG="${VER_NAME}-${VER_CODE}"
+            PRERELEASE="${{ inputs.prerelease }}"
+          fi
+
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "name=NextZygisk ${VER_NAME} (${VER_CODE}-${COMMIT})" >> "$GITHUB_OUTPUT"
+          echo "prerelease=${PRERELEASE}" >> "$GITHUB_OUTPUT"
+
+          ls -la build/out
+
+      - name: Write release notes
+        run: |
+          cat > release-notes.md <<'EOF'
+          ## Download
+
+          - **`NextZygisk-…-release.zip`**: use this one.
+          - **`NextZygisk-…-debug.zip`**: verbose logs, only to collect logs for a bug report.
+
+          Install it from KernelSU / ReSukiSU / Magisk / APatch → Modules → Install from storage, then reboot.
+          Magisk users: turn off Magisk's built-in Zygisk first.
+
+          See the [README](https://github.com/${{ github.repository }}#readme) for details,
+          and attach the diagnostics report (WebUI → Actions → Export diagnostics) to any issue.
+          EOF
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: ${{ steps.version.outputs.name }}
+          target_commitish: ${{ github.sha }}
+          prerelease: ${{ steps.version.outputs.prerelease }}
+          body_path: release-notes.md
+          generate_release_notes: true
+          files: |
+            build/out/NextZygisk-v*-release.zip
+            build/out/NextZygisk-v*-debug.zip
+          fail_on_unmatched_files: true
