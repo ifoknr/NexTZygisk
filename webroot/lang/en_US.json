@@ -31,12 +31,15 @@
       },
       "issues": {
         "monitor": "Monitor is not tracing",
-        "daemon": "ReZygiskd {bits}-bit"
+        "daemon": "NextZygiskd {bits}-bit",
+        "modules": "{count} Zygisk modules not working",
+        "umountOff": "Root unmount is off",
+        "umountOffBody": "Apps on the denylist can see root mounts unless another module hides them."
       },
       "components": {
         "title": "Components",
         "monitor": "Monitor",
-        "daemon": "ReZygiskd {bits}-bit",
+        "daemon": "NextZygiskd {bits}-bit",
         "running": "Running",
         "notRunning": "Not running",
         "tracing": "Tracing",
@@ -44,7 +47,26 @@
         "stopped": "Stopped",
         "exited": "Exited",
         "modules": "Zygisk modules",
-        "viewAll": "View all"
+        "viewAll": "View all",
+        "modulesWorking": "{count} working"
+      },
+      "hiding": {
+        "title": "Hiding",
+        "active": "Active",
+        "notLoaded": "Not loaded",
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "none": "No hiding module detected",
+        "noneHint": "Root hiding modules such as Treat Wheel, Shamiko or Zygisk Assistant will show up here with their live status.",
+        "roles": {
+          "treatwheel": "Hides the Zygisk and root environment",
+          "shamiko": "Hides root and Zygisk",
+          "assistant": "Hides root and Zygisk",
+          "nohello": "Hides root and Zygisk",
+          "tricky": "Keystore and attestation",
+          "pif": "Play Integrity verdicts",
+          "susfs": "Kernel level traces"
+        }
       },
       "device": {
         "title": "Device",
@@ -85,18 +107,18 @@
       "daemon": {
         "title": "Daemon",
         "run": "Query",
-        "description": "Query ReZygiskd for its PID, root implementation and loaded modules.",
-        "notRunning": "ReZygiskd is not responding."
+        "description": "Query NextZygiskd for its PID, root implementation and loaded modules.",
+        "notRunning": "NextZygiskd is not responding."
       },
       "tools": {
         "title": "Tools",
         "logs": {
           "title": "Live logs",
-          "desc": "Stream ReZygisk logcat with filters"
+          "desc": "Stream NextZygisk logcat with filters"
         },
         "export": {
           "title": "Export diagnostics",
-          "desc": "Save a full report to Download/ReZygisk",
+          "desc": "Save a full report to Download/NextZygisk",
           "working": "Collecting diagnostics…",
           "done": "Saved to {path}",
           "failed": "Failed to export diagnostics"
@@ -120,13 +142,23 @@
           "confirmMessage": "Your device will reboot now.",
           "confirm": "Reboot"
         }
+      },
+      "umount": {
+        "section": "Hiding",
+        "title": "Root unmount",
+        "on": "On: NextZygisk unmounts root for apps on the denylist. Recommended.",
+        "off": "Off: apps on the denylist can see root mounts unless another module hides them. Applies after reboot.",
+        "confirmTitle": "Turn off root unmount?",
+        "confirmMessage": "Apps on the denylist will be able to see root mounts unless another module unmounts them. Only do this if another module handles unmounting. Takes effect after reboot.",
+        "confirm": "Turn off",
+        "reboot": "Saved. Reboot to apply.",
+        "failed": "Failed to change the setting"
       }
     },
     "modules": {
       "title": "Modules",
-      "notAvaliable": "No modules using Zygisk here.",
-      "arch": "Architecture: ",
-      "count": "{count} active Zygisk modules",
+      "notAvaliable": "No Zygisk modules installed.",
+      "count": "{count} Zygisk modules",
       "search": "Search modules",
       "noResults": "No modules match your search.",
       "emptyHint": "Install a Zygisk module and reboot to see it here.",
@@ -135,7 +167,36 @@
       "by": "by",
       "versionCode": "Version code",
       "path": "Path",
-      "copyId": "Copy ID"
+      "copyId": "Copy ID",
+      "countWorking": "{count} working",
+      "countIssues": "{count} with issues",
+      "filter": {
+        "all": "All",
+        "working": "Working",
+        "issues": "Issues"
+      },
+      "status": {
+        "working": "Working",
+        "partial": "Partial",
+        "notLoaded": "Not working",
+        "disabled": "Disabled",
+        "removal": "Removing",
+        "unknown": "Unknown",
+        "pending": "Reboot needed"
+      },
+      "reasons": {
+        "noLib": "No Zygisk library for this device ({abi}). The module does not support your architecture.",
+        "daemonDown": "NextZygiskd {bits}-bit is not running, so it could not load this module.",
+        "update": "An update is pending. Reboot to apply it.",
+        "failed": "Not loaded in {bits}-bit. It failed to load, was installed after boot, or was rejected. Reboot, then check the logs.",
+        "installed": "Installed. Reboot to activate it."
+      },
+      "lib": {
+        "missing": "Missing",
+        "loaded": "Loaded",
+        "notLoaded": "Not loaded"
+      },
+      "updatePending": "Update pending"
     },
     "settings": {
       "title": "Settings",
@@ -155,6 +216,7 @@
         "title": "Enable system font",
         "description": "This option will enable system font in current WebUI. NOTE: May not be compatible with FlipFont"
       },
+      "basedOn": "Based on",
       "moduleDevelopers": "Module Developer(s)",
       "WebUIDevelopers": "WebUI Developer(s)",
       "orginalDevelopers": "Original Module Developer(s)",
@@ -165,7 +227,7 @@
       },
       "refresh": {
         "title": "Auto refresh",
-        "description": "How often live pages re-read ReZygisk's state.",
+        "description": "How often live pages re-read NextZygisk's state.",
         "off": "Off"
       }
     },
@@ -179,6 +241,13 @@
         "light": "Light Theme",
         "amoled": "Amoled Theme",
         "system_based": "System Based Theme"
+      },
+      "section": "Appearance",
+      "description": {
+        "system_based": "Follows your device's dark mode setting",
+        "dark": "Soft dark grey, easy on the eyes",
+        "amoled": "Pure black, saves battery on OLED screens",
+        "light": "Bright and clean"
       }
     },
     "mini_actions_logs": {
@@ -190,7 +259,7 @@
       "save": "Save",
       "search": "Filter logs",
       "all": "All",
-      "empty": "No ReZygisk logs yet. Release builds only log info, warnings and errors.",
+      "empty": "No NextZygisk logs yet. Release builds only log info, warnings and errors.",
       "saved": "Saved to {path}",
       "saveFailed": "Failed to save logs"
     }

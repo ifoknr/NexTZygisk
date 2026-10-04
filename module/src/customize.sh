@@ -7,6 +7,18 @@ MIN_KSUD_VERSION=@MIN_KSUD_VERSION@
 MIN_MAGISK_VERSION=@MIN_MAGISK_VERSION@
 MIN_APATCH_VERSION=@MIN_APATCH_VERSION@
 
+# INFO: Install banner, shown in every root manager's install log.
+ui_print " "
+ui_print ' _  _         _   ____         _    _'
+ui_print '| \| |_____ _| |_|_  /  _ __ _(_)__| |__'
+ui_print '| .` / -_) \ /  _|/ / || / _` | (_-< / /'
+ui_print '|_|\_\___/_\_\\__/___\_, \__, |_/__/_\_\'
+ui_print '                     |__/|___/'
+ui_print " "
+ui_print "  Standalone Zygisk  ·  fast  ·  robust  ·  hides accurately"
+ui_print "  Based on ReZygisk by The PerformanC Organization"
+ui_print " "
+
 if [ "$BOOTMODE" ] && [ "$KSU" ]; then
   ui_print "- Installing from KernelSU app"
   ui_print "- KernelSU version: $KSU_KERNEL_VER_CODE (kernel) + $KSU_VER_CODE (ksud)"
@@ -25,7 +37,7 @@ if [ "$BOOTMODE" ] && [ "$KSU" ]; then
   if [ "$(which magisk)" ]; then
     ui_print "*********************************************************"
     ui_print "! Multiple root implementation is NOT supported!"
-    ui_print "! Please uninstall Magisk before installing ReZygisk"
+    ui_print "! Please uninstall Magisk before installing NextZygisk"
     abort    "*********************************************************"
   fi
   elif [ "$BOOTMODE" ] && [ "$APATCH" ]; then
@@ -52,7 +64,7 @@ else
 fi
 
 VERSION=$(grep_prop version "${TMPDIR}/module.prop")
-ui_print "- Installing ReZygisk $VERSION"
+ui_print "- Installing NextZygisk $VERSION"
 
 # check android
 if [ "$API" -lt 25 ]; then
@@ -68,6 +80,15 @@ if [ "$ARCH" != "arm" ] && [ "$ARCH" != "arm64" ] && [ "$ARCH" != "x86" ] && [ "
 else
   ui_print "- Device platform: $ARCH"
 fi
+
+# INFO: Two Zygisk implementations at once conflict. Disable the known ones (the user
+#         can re-enable them from the root manager) and say so.
+for other in zygisksu; do
+  if [ -d "/data/adb/modules/$other" ] && [ ! -f "/data/adb/modules/$other/disable" ]; then
+    touch "/data/adb/modules/$other/disable"
+    ui_print "- Disabled \"$other\" (Zygisk Next): it conflicts with NextZygisk"
+  fi
+done
 
 ui_print "- Extracting verify.sh"
 unzip -o "$ZIPFILE" 'verify.sh' -d "$TMPDIR" >&2
@@ -97,11 +118,13 @@ extract "$ZIPFILE" 'module.prop'     "$MODPATH"
 extract "$ZIPFILE" 'post-fs-data.sh' "$MODPATH"
 extract "$ZIPFILE" 'service.sh'      "$MODPATH"
 extract "$ZIPFILE" 'uninstall.sh'    "$MODPATH"
+extract "$ZIPFILE" 'action.sh'       "$MODPATH"
 extract "$ZIPFILE" 'rezygisk.sh' "/data/adb/service.d/"
 
 cp "$MODPATH/module.prop" "$MODPATH/module.prop.bak"
 
 chmod +x "$MODPATH/uninstall.sh"
+chmod +x "$MODPATH/action.sh"
 chmod +x "/data/adb/service.d/rezygisk.sh"
 
 mv "$TMPDIR/sepolicy.rule" "$MODPATH"

@@ -31,12 +31,15 @@
       },
       "issues": {
         "monitor": "المراقبة لا تتتبع حالياً",
-        "daemon": "ReZygiskd {bits} بت"
+        "daemon": "NextZygiskd {bits} بت",
+        "modules": "{count} وحدات Zygisk لا تعمل",
+        "umountOff": "فك تركيب الروت متوقف",
+        "umountOffBody": "التطبيقات في قائمة الإخفاء تقدر تشوف آثار الروت إلا إذا وحدة ثانية أخفتها."
       },
       "components": {
         "title": "المكونات",
         "monitor": "المراقبة",
-        "daemon": "ReZygiskd {bits} بت",
+        "daemon": "NextZygiskd {bits} بت",
         "running": "يعمل",
         "notRunning": "لا يعمل",
         "tracing": "جارٍ التتبع",
@@ -44,7 +47,26 @@
         "stopped": "متوقف",
         "exited": "خرج",
         "modules": "وحدات Zygisk",
-        "viewAll": "عرض الكل"
+        "viewAll": "عرض الكل",
+        "modulesWorking": "{count} تعمل"
+      },
+      "hiding": {
+        "title": "الإخفاء",
+        "active": "نشط",
+        "notLoaded": "غير محمّل",
+        "enabled": "مفعّل",
+        "disabled": "معطّل",
+        "none": "لم يتم العثور على وحدة إخفاء",
+        "noneHint": "وحدات إخفاء الروت مثل Treat Wheel أو Shamiko أو Zygisk Assistant ستظهر هنا مع حالتها المباشرة.",
+        "roles": {
+          "treatwheel": "يخفي بيئة Zygisk والروت",
+          "shamiko": "يخفي الروت و Zygisk",
+          "assistant": "يخفي الروت و Zygisk",
+          "nohello": "يخفي الروت و Zygisk",
+          "tricky": "مخزن المفاتيح والتوثيق",
+          "pif": "نتائج Play Integrity",
+          "susfs": "آثار مستوى النواة"
+        }
       },
       "device": {
         "title": "الجهاز",
@@ -85,18 +107,18 @@
       "daemon": {
         "title": "الخدمة",
         "run": "استعلام",
-        "description": "استعلم من ReZygiskd عن رقم العملية ونوع الروت والوحدات المحمّلة.",
-        "notRunning": "ReZygiskd لا يستجيب."
+        "description": "استعلم من NextZygiskd عن رقم العملية ونوع الروت والوحدات المحمّلة.",
+        "notRunning": "NextZygiskd لا يستجيب."
       },
       "tools": {
         "title": "الأدوات",
         "logs": {
           "title": "السجلات المباشرة",
-          "desc": "بث سجلات ReZygisk مع الفلاتر"
+          "desc": "بث سجلات NextZygisk مع الفلاتر"
         },
         "export": {
           "title": "تصدير التشخيص",
-          "desc": "حفظ تقرير كامل في Download/ReZygisk",
+          "desc": "حفظ تقرير كامل في Download/NextZygisk",
           "working": "جارٍ جمع التشخيص…",
           "done": "تم الحفظ في {path}",
           "failed": "فشل تصدير التشخيص"
@@ -120,13 +142,23 @@
           "confirmMessage": "سيُعاد تشغيل جهازك الآن.",
           "confirm": "إعادة التشغيل"
         }
+      },
+      "umount": {
+        "section": "الإخفاء",
+        "title": "فك تركيب الروت",
+        "on": "مفعّل: NextZygisk يفك تركيب الروت عن التطبيقات في قائمة الإخفاء. موصى به.",
+        "off": "متوقف: التطبيقات في قائمة الإخفاء تقدر تشوف آثار الروت إلا إذا وحدة ثانية أخفتها. يتطبق بعد إعادة التشغيل.",
+        "confirmTitle": "إيقاف فك تركيب الروت؟",
+        "confirmMessage": "التطبيقات في قائمة الإخفاء بتقدر تشوف آثار الروت إلا إذا وحدة ثانية فكت التركيب. سوّها بس إذا عندك وحدة ثانية تتكفّل بالفك. يتطبق بعد إعادة التشغيل.",
+        "confirm": "إيقاف",
+        "reboot": "تم الحفظ. أعد التشغيل للتطبيق.",
+        "failed": "فشل تغيير الإعداد"
       }
     },
     "modules": {
       "title": "الوحدات",
-      "notAvaliable": "لا توجد وحدات تستخدم Zygisk.",
-      "arch": "المعمارية:",
-      "count": "{count} وحدات Zygisk نشطة",
+      "notAvaliable": "لا توجد وحدات Zygisk مثبتة.",
+      "count": "{count} وحدات Zygisk",
       "search": "ابحث في الوحدات",
       "noResults": "لا توجد وحدات مطابقة للبحث.",
       "emptyHint": "ثبّت وحدة Zygisk وأعد التشغيل لتظهر هنا.",
@@ -135,7 +167,36 @@
       "by": "بواسطة",
       "versionCode": "رمز الإصدار",
       "path": "المسار",
-      "copyId": "نسخ المعرّف"
+      "copyId": "نسخ المعرّف",
+      "countWorking": "{count} تعمل",
+      "countIssues": "{count} فيها مشاكل",
+      "filter": {
+        "all": "الكل",
+        "working": "تعمل",
+        "issues": "مشاكل"
+      },
+      "status": {
+        "working": "تعمل",
+        "partial": "جزئياً",
+        "notLoaded": "لا تعمل",
+        "disabled": "معطّلة",
+        "removal": "تُحذف",
+        "unknown": "غير معروف",
+        "pending": "يحتاج إعادة تشغيل"
+      },
+      "reasons": {
+        "noLib": "لا توجد مكتبة Zygisk لهذا الجهاز ({abi}). الوحدة لا تدعم معمارية جهازك.",
+        "daemonDown": "خدمة NextZygiskd {bits}-بت لا تعمل، فلم تتمكن من تحميل هذه الوحدة.",
+        "update": "يوجد تحديث معلّق. أعد التشغيل لتطبيقه.",
+        "failed": "لم تُحمَّل في {bits}-بت. إما فشل تحميلها، أو ثُبتت بعد الإقلاع، أو تم رفضها. أعد التشغيل ثم راجع السجلات.",
+        "installed": "تم التثبيت. أعد التشغيل لتفعيلها."
+      },
+      "lib": {
+        "missing": "غير موجودة",
+        "loaded": "محمّلة",
+        "notLoaded": "غير محمّلة"
+      },
+      "updatePending": "تحديث معلّق"
     },
     "settings": {
       "title": "الإعدادات",
@@ -155,6 +216,7 @@
         "title": "تفعيل خط النظام",
         "description": "يعرض هذا الخيار النص بخط النظام بدلاً من خط WebUI. قد لا يتوافق مع FlipFont."
       },
+      "basedOn": "مبني على",
       "moduleDevelopers": "مطورو الإضافة",
       "WebUIDevelopers": "مطورو WebUI",
       "orginalDevelopers": "المطورون الأصليون للإضافة",
@@ -165,7 +227,7 @@
       },
       "refresh": {
         "title": "التحديث التلقائي",
-        "description": "عدد مرات قراءة حالة ReZygisk في الصفحات المباشرة.",
+        "description": "عدد مرات قراءة حالة NextZygisk في الصفحات المباشرة.",
         "off": "إيقاف"
       }
     },
@@ -179,6 +241,13 @@
         "light": "الوضع الفاتح",
         "amoled": "وضع الأموليد",
         "system_based": "حسب النظام"
+      },
+      "section": "المظهر",
+      "description": {
+        "system_based": "يتبع إعداد الوضع الداكن في جهازك",
+        "dark": "رمادي داكن مريح للعين",
+        "amoled": "أسود خالص، يوفّر البطارية في شاشات OLED",
+        "light": "فاتح ونظيف"
       }
     },
     "mini_actions_logs": {

@@ -6,8 +6,12 @@ import {
   MONITOR_STATE,
   copyText,
   escapeHTML,
+  detectHidingModules,
   formatDuration,
   getDeviceInfo,
+  getInstalledModules,
+  getZygiskModules,
+  isUmountDisabled,
   getModuleProp,
   getState,
   haptic,
@@ -22,6 +26,9 @@ const RING_LENGTH = 2 * Math.PI * 42
 let lastUpdate = 0
 let lastDevice = {}
 let lastVersion = null
+let installedModules = null
+let zygiskModules = null
+let umountDisabled = false
 let stopPolling = () => {}
 let tickerTimer = null
 let refreshing = false
@@ -122,8 +129,27 @@ function renderIssues(summary, strings) {
     })
   })
 
+  if (umountDisabled) {
+    issues.push({
+      tone: 'warn',
+      title: strings.issues.umountOff,
+      body: strings.issues.umountOffBody,
+      action: 'actions'
+    })
+  }
+
+  const broken = (zygiskModules || []).filter((mod) => mod.status === 'notLoaded' || mod.status === 'partial')
+  if (broken.length) {
+    issues.push({
+      tone: 'warn',
+      title: fill(strings.issues.modules, { count: broken.length }),
+      body: broken.map((mod) => mod.name).join(', '),
+      action: 'modules'
+    })
+  }
+
   container.innerHTML = issues.map((issue) => `
-    <div class="nz_banner ${issue.tone === 'warn' ? 'nz_banner_warn' : ''}">
+    <div class="nz_banner ${issue.tone === 'warn' ? 'nz_banner_warn' : ''} ${issue.action ? 'nz_card_tap' : ''}" ${issue.action ? `data-action="${issue.action}"` : ''}>
       <div style="flex-shrink: 0; width: 22px; height: 22px; fill: ${issue.tone === 'warn' ? 'var(--warn)' : 'var(--err)'};">${icon(issue.tone === 'warn' ? 'warn' : 'error')}</div>
       <div><b>${escapeHTML(issue.title)}</b>${escapeHTML(issue.body)}</div>
     </div>
@@ -167,16 +193,63 @@ function renderComponents(summary, strings) {
     }))
   })
 
+  /* INFO: Count every installed Zygisk module, not only the loaded ones. */
+  const installed = zygiskModules ? zygiskModules.filter((mod) => mod.status !== 'disabled' && mod.status !== 'removal') : null
+  const workingCount = installed ? installed.filter((mod) => mod.status === 'working').length : summary.modules.length
+  const hasIssues = installed ? installed.some((mod) => mod.status === 'notLoaded' || mod.status === 'partial') : false
+
   tiles.push(tile({
     label: strings.components.modules,
-    value: String(summary.modules.length),
-    hint: strings.components.viewAll,
-    tone: summary.modules.length ? 'ok' : '',
+    value: installed ? `${workingCount} / ${installed.length}` : String(summary.modules.length),
+    hint: installed ? fill(strings.components.modulesWorking, { count: workingCount }) : strings.components.viewAll,
+    tone: hasIssues ? 'warn' : (workingCount ? 'ok' : ''),
     iconName: 'modules',
     action: 'modules'
   }))
 
   container.innerHTML = tiles.join('')
+}
+
+function renderHiding(summary, strings) {
+  const container = document.getElementById('home_hiding')
+  if (!container || installedModules === null) return
+
+  const loadedIds = summary.modules.map((mod) => mod.id)
+  const found = detectHidingModules(installedModules, loadedIds)
+
+  if (found.length === 0) {
+    container.innerHTML = `
+      <div class="nz_tile nz_tile_wide">
+        <div class="nz_tile_label">${icon('shield')}<span>${escapeHTML(strings.hiding.none)}</span></div>
+        <div class="nz_tile_hint" style="white-space: normal;">${escapeHTML(strings.hiding.noneHint)}</div>
+      </div>
+    `
+
+    return
+  }
+
+  container.innerHTML = found.map((mod) => {
+    let value = strings.hiding.enabled
+    let tone = 'ok'
+
+    if (!mod.enabled) {
+      value = strings.hiding.disabled
+      tone = ''
+    } else if (mod.zygisk && summary.known) {
+      /* INFO: A Zygisk based hider that NextZygisk did not load is not protecting anything. */
+      value = mod.loaded ? strings.hiding.active : strings.hiding.notLoaded
+      tone = mod.loaded ? 'ok' : 'warn'
+    }
+
+    return tile({
+      label: mod.label,
+      value,
+      hint: strings.hiding.roles[mod.key],
+      tone,
+      iconName: 'shield',
+      action: 'modules'
+    })
+  }).join('')
 }
 
 function deviceRows(strings) {
@@ -237,7 +310,9 @@ async function refresh({ full = false } = {}) {
       getState(),
       getStrings('home'),
       full ? getDeviceInfo().then((info) => { lastDevice = info }) : null,
-      full || !lastVersion ? getModuleProp().then((prop) => { lastVersion = prop.version || null }) : null
+      full || !lastVersion ? getModuleProp().then((prop) => { lastVersion = prop.version || null }) : null,
+      full || installedModules === null ? getInstalledModules().then((mods) => { installedModules = mods }) : null,
+      full ? isUmountDisabled().then((disabled) => { umountDisabled = disabled }) : null
     ])
 
     if (!strings || !isActive()) return
@@ -245,9 +320,13 @@ async function refresh({ full = false } = {}) {
     const summary = summarizeState(state)
     cachedRoot = summary.root
 
+    if (full || zygiskModules === null) zygiskModules = await getZygiskModules(summary)
+    if (!isActive()) return
+
     renderHero(summary, overallStatus(summary), strings)
     renderIssues(summary, strings)
     renderComponents(summary, strings)
+    renderHiding(summary, strings)
     if (full) renderDevice(strings)
 
     lastUpdate = Date.now()
@@ -291,6 +370,21 @@ export async function load() {
 
     haptic()
     loadPage(target.getAttribute('data-action'))
+  })
+
+  utils.addListener(document.getElementById('home_issues'), 'click', (event) => {
+    const target = event.target.closest('[data-action]')
+    if (!target) return
+
+    haptic()
+    loadPage(target.getAttribute('data-action'))
+  })
+
+  utils.addListener(document.getElementById('home_hiding'), 'click', (event) => {
+    if (!event.target.closest('[data-action]')) return
+
+    haptic()
+    loadPage('modules')
   })
 
   utils.addListener(document.getElementById('home_device'), 'click', (event) => {
