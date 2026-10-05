@@ -103,10 +103,12 @@ bool exec_command(char *restrict buf, size_t len, const char *restrict file, con
 char *exec_command_output(const char *restrict file, const char *const argv[], size_t max_len);
 
 /* INFO: Identifies a file version, used to invalidate caches when the file changes. */
+/* INFO: 64-bit fields: on 32-bit bionic, struct stat keeps st_ino and st_size as 64-bit
+           values while ino_t and off_t are 32-bit, so those would truncate. */
 struct file_stamp {
   bool exists;
-  ino_t ino;
-  off_t size;
+  unsigned long long ino;
+  long long size;
   struct timespec mtime;
 };
 
