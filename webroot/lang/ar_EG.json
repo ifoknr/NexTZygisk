@@ -27,7 +27,8 @@
         "injected": "تم حقن {working} من {expected} Zygote",
         "module": "وحدة واحدة",
         "modules": "{count} وحدات",
-        "noState": "لا توجد حالة بعد. قد لا تكون المراقبة قيد التشغيل."
+        "noState": "لا توجد حالة بعد. قد لا تكون المراقبة قيد التشغيل.",
+        "zygotes": "Zygote"
       },
       "issues": {
         "monitor": "المراقبة لا تتتبع حالياً",
