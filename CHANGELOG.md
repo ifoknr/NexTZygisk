@@ -1,5 +1,9 @@
 # NextZygisk changelog
 
+## v1.0.2
+- Module banner in the root manager's module list, in the NEXT design shared with NextWheel
+  and NextSUSFS. The README header and social preview use the same design.
+
 ## v1.0.1
 First stable NextZygisk release, based on ReZygisk by The PerformanC Organization.
 

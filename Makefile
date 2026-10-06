@@ -71,7 +71,7 @@ $(MODULE_DONE): $(LOADER_DONE) $(ZYGISKD_DONE) $(MODULE_INPUTS)
 
 
 	@echo "Copying module files..."
-	@cp module/src/verify.sh module/src/sepolicy.rule module/src/rezygisk.sh module/src/action.sh $(MODULE_OUT)/
+	@cp module/src/verify.sh module/src/sepolicy.rule module/src/rezygisk.sh module/src/action.sh module/src/banner.png $(MODULE_OUT)/
 
 	@echo "Customizing module.prop..."
 	@sed -e 's/$${moduleId}/$(MODULE_ID)/g'                                             \
