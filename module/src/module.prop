@@ -6,3 +6,4 @@ author=NextZygisk (based on ReZygisk by The PerformanC Organization)
 description=Standalone implementation of Zygisk.
 managedFeatures=kernel_umount
 banner=banner.png
+updateJson=https://raw.githubusercontent.com/ifoknr/NexTZygisk/main/update.json

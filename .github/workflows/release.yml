@@ -66,6 +66,9 @@ jobs:
           echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
           echo "name=NextZygisk ${VER_NAME} (${VER_CODE}-${COMMIT})" >> "$GITHUB_OUTPUT"
           echo "prerelease=${PRERELEASE}" >> "$GITHUB_OUTPUT"
+          echo "zip=NextZygisk-${VER_NAME}-${VER_CODE}-${COMMIT}-release.zip" >> "$GITHUB_OUTPUT"
+          echo "ver_name=${VER_NAME}" >> "$GITHUB_OUTPUT"
+          echo "ver_code=${VER_CODE}" >> "$GITHUB_OUTPUT"
 
           ls -la build/out
 
@@ -107,3 +110,28 @@ jobs:
             build/out/NextZygisk-v*-release.zip
             build/out/NextZygisk-v*-debug.zip
           fail_on_unmatched_files: true
+
+      # INFO: Point update.json (module.prop: updateJson) at this release, so root managers
+      #         offer it as an update. Skipped for pre-releases.
+      - name: Update update.json
+        if: steps.version.outputs.prerelease != 'true'
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+          ZIP: ${{ steps.version.outputs.zip }}
+          VER_NAME: ${{ steps.version.outputs.ver_name }}
+          VER_CODE: ${{ steps.version.outputs.ver_code }}
+        run: |
+          git fetch origin main
+          git checkout -B update-json origin/main
+          cat > update.json <<EOF
+          {
+            "version": "${VER_NAME} (${VER_CODE})",
+            "versionCode": ${VER_CODE},
+            "zipUrl": "https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/${ZIP}",
+            "changelog": "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/main/CHANGELOG.md"
+          }
+          EOF
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add update.json
+          git commit -m "chore: update.json for ${TAG}" && git push origin HEAD:main || echo "update.json unchanged"
