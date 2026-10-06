@@ -106,6 +106,7 @@ export async function load() {
     markCurrent()
 
     main_html.setAttribute('dir', /^(ar|fa|he|ur)_/.test(getLangLocate) ? 'rtl' : 'ltr')
+    main_html.setAttribute('data-font', /^vi_/.test(getLangLocate) ? 'roboto' : '')
     main_html.setAttribute('lang', getLangLocate.replace('.json', '').replace('_', '-'))
 
     loadPage('settings')

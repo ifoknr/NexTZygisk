@@ -15,6 +15,13 @@
 
   /* Locked Color */
   --lock: #fff;
+  /* INFO: The NEXT design fonts: Sora for Latin text, Roboto for Cyrillic, Noto Kufi Arabic
+            for Arabic, bundled in fonts/ so the WebUI works offline. */
+  --font-family: 'Sora', 'Roboto', 'Noto Kufi Arabic', sans-serif;
+}
+
+/* INFO: Sora has no glyphs for Vietnamese tone marks, which would make words mix two fonts. */
+:root[data-font="roboto"] {
   --font-family: 'Roboto', 'Noto Kufi Arabic', sans-serif;
 }
 
