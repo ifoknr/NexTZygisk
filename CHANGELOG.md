@@ -1,5 +1,9 @@
 # NextZygisk changelog
 
+## v1.0.3
+- Updates from the root manager: module.prop has an updateJson link, and each release
+  updates update.json, so the next versions show up as updates automatically.
+
 ## v1.0.2
 - Module banner in the root manager's module list, in the NEXT design shared with NextWheel
   and NextSUSFS. The README header and social preview use the same design.
