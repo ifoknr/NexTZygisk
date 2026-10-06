@@ -5,3 +5,4 @@ versionCode=${versionCode}
 author=NextZygisk (based on ReZygisk by The PerformanC Organization)
 description=Standalone implementation of Zygisk.
 managedFeatures=kernel_umount
+banner=banner.png

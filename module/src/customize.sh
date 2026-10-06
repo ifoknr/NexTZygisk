@@ -119,6 +119,9 @@ extract "$ZIPFILE" 'post-fs-data.sh' "$MODPATH"
 extract "$ZIPFILE" 'service.sh'      "$MODPATH"
 extract "$ZIPFILE" 'uninstall.sh'    "$MODPATH"
 extract "$ZIPFILE" 'action.sh'       "$MODPATH"
+# INFO: Module banner for the root manager's module list (module.prop: banner=banner.png).
+extract "$ZIPFILE" 'banner.png'      "$MODPATH"
+chmod 644 "$MODPATH/banner.png"
 extract "$ZIPFILE" 'rezygisk.sh' "/data/adb/service.d/"
 
 cp "$MODPATH/module.prop" "$MODPATH/module.prop.bak"
