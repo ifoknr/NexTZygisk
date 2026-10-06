@@ -3,3 +3,7 @@
 .idea
 .vscode
 build
+
+# Local development notes — kept privately, never committed
+CLAUDE.md
+IDEAS.md
