@@ -12,6 +12,7 @@ themeList[sys_theme](true)
 /* INFO: Restore text direction for RTL languages on startup, not only on language change. */
 const savedLanguage = localStorage.getItem('/TreatWheel/language') || 'en_US'
 document.getElementById('main_html').setAttribute('dir', /^(ar|fa|he|ur)_/.test(savedLanguage) ? 'rtl' : 'ltr')
+document.getElementById('main_html').setAttribute('data-font', /^vi_/.test(savedLanguage) ? 'roboto' : '')
 document.getElementById('main_html').setAttribute('lang', savedLanguage.replace('_', '-'))
 
 let ConfigState = {}
