@@ -71,7 +71,17 @@ jobs:
 
       - name: Write release notes
         run: |
-          cat > release-notes.md <<'EOF'
+          VER_NAME=$(sed -n 's/^VER_NAME ?= //p' common.mk)
+          {
+            echo '> [!WARNING]'
+            echo '> **Personal project, use at your own risk.** Keep a way to boot without modules (safe mode) before installing.'
+            echo
+            echo '## Changes'
+            echo
+            awk -v v="## $VER_NAME" '$0 == v {f = 1; next} /^## / {f = 0} f' CHANGELOG.md
+            echo
+          } > release-notes.md
+          cat >> release-notes.md <<'EOF'
           ## Download
 
           - **`NextZygisk-…-release.zip`**: use this one.
