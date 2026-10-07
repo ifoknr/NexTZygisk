@@ -162,7 +162,7 @@ To develop the WebUI on a computer, serve the `webroot/` folder with any static 
 <table>
   <tr>
     <td align="center">
-      <a href="https://github.com/ifoknr"><img src="https://github.com/ifoknr.png?size=120" width="96" alt="ifoknr"><br><b>ifoknr</b></a><br>
+      <a href="https://github.com/ifoknr"><img src="https://github.com/ifoknr.png?size=120" width="96" alt="IFOKNR"><br><b>ifoknr</b></a><br>
       NextZygisk developer
     </td>
   </tr>
