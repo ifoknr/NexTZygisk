@@ -111,6 +111,42 @@ jobs:
             build/out/NextZygisk-v*-debug.zip
           fail_on_unmatched_files: true
 
+      # INFO: Releases created with GITHUB_TOKEN do not trigger other workflows, so
+      #         telegram-notify.yml never sees them. Post to the channel from here.
+      - name: Notify Telegram
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
+          TAG: ${{ steps.version.outputs.tag }}
+          VER_NAME: ${{ steps.version.outputs.ver_name }}
+          PRE: ${{ steps.version.outputs.prerelease }}
+        run: |
+          if [ -z "$TELEGRAM_TOKEN" ] || [ -z "$TELEGRAM_TO" ]; then
+            echo "Telegram secrets are not set, skipping."
+            exit 0
+          fi
+          {
+            if [ "$PRE" = true ]; then
+              echo "🧪 إصدار تجريبي (للاختبار فقط)"
+            else
+              echo "🚀 تحديث جديد تم إطلاقه!"
+            fi
+            echo
+            echo "📦 الأداة/الموديول: ${GITHUB_REPOSITORY#*/}"
+            echo "🏷️ الإصدار: $TAG"
+            echo
+            echo "📝 ما الجديد؟"
+            awk -v v="## $VER_NAME" '$0 == v {f = 1; next} /^## / {f = 0} f' CHANGELOG.md | head -n 40
+            echo
+            echo "🔗 رابط التحميل المباشر:"
+            echo "https://github.com/$GITHUB_REPOSITORY/releases/tag/$TAG"
+          } > telegram.txt
+          curl -sS --fail-with-body -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
+            --data-urlencode "chat_id=$TELEGRAM_TO" \
+            --data-urlencode "text@telegram.txt" \
+            -d disable_web_page_preview=true > /dev/null
+          echo "Sent to Telegram."
+
       # INFO: Point update.json (module.prop: updateJson) at this release, so root managers
       #         offer it as an update. Skipped for pre-releases.
       - name: Update update.json
