@@ -64,7 +64,9 @@ jobs:
           fi
 
           echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
-          echo "name=NextZygisk ${VER_NAME} (${VER_CODE}-${COMMIT})" >> "$GITHUB_OUTPUT"
+          SUFFIX=""
+          [ "$PRERELEASE" = true ] && SUFFIX=" (test)"
+          echo "name=NextZygisk ${VER_NAME} (${VER_CODE}-${COMMIT})${SUFFIX}" >> "$GITHUB_OUTPUT"
           echo "prerelease=${PRERELEASE}" >> "$GITHUB_OUTPUT"
           echo "zip=NextZygisk-${VER_NAME}-${VER_CODE}-${COMMIT}-release.zip" >> "$GITHUB_OUTPUT"
           echo "ver_name=${VER_NAME}" >> "$GITHUB_OUTPUT"
