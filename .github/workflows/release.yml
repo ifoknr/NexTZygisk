@@ -117,6 +117,8 @@ jobs:
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
+          # Optional: the topic (message_thread_id) inside a group with topics.
+          TELEGRAM_TOPIC: ${{ secrets.TELEGRAM_TOPIC }}
           TAG: ${{ steps.version.outputs.tag }}
           VER_NAME: ${{ steps.version.outputs.ver_name }}
           PRE: ${{ steps.version.outputs.prerelease }}
@@ -143,6 +145,7 @@ jobs:
           } > telegram.txt
           curl -sS --fail-with-body -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
             --data-urlencode "chat_id=$TELEGRAM_TO" \
+            ${TELEGRAM_TOPIC:+-d message_thread_id=$TELEGRAM_TOPIC} \
             --data-urlencode "text@telegram.txt" \
             -d disable_web_page_preview=true > /dev/null
           echo "Sent to Telegram."
