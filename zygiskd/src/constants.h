@@ -10,6 +10,10 @@
 #define NEXTZYGISK_DATA_DIR "/data/adb/nextzygisk"
 /* INFO: When present, NextZygisk does not unmount root for apps on the denylist. */
 #define UMOUNT_DISABLED_FILE NEXTZYGISK_DATA_DIR "/umount_disabled"
+/* INFO: NextSUSFS's "Unmounted for apps" list. NextZygisk turns KernelSU's own umount
+           off, so it unmounts these paths itself. One path per line, # for comments. */
+#define CUSTOM_UMOUNT_LIST_FILE "/data/adb/nextsusfs/custom_kernel_umount.txt"
+#define CUSTOM_UMOUNT_LIST_MAX 128
 
 #define ZYGOTE_INJECTED LP_SELECT(5, 4)
 #define DAEMON_SET_INFO LP_SELECT(7, 6)

@@ -1,5 +1,12 @@
 # NextZygisk changelog
 
+## v1.0.4
+- Fixed: the paths in NextSUSFS's "Unmounted for apps" list were never unmounted. NextZygisk
+  turns KernelSU's own umount off and unmounts root mounts itself, so KernelSU never applied
+  that list. NextZygisk now reads /data/adb/nextsusfs/custom_kernel_umount.txt and unmounts
+  those paths too, for the same apps it unmounts root for. This hides a ROM's own bind
+  mounts over system files (for example a GSI's bluetooth or camera overrides) from apps.
+
 ## v1.0.3
 - Updates from the root manager: module.prop has an updateJson link, and each release
   updates update.json, so the next versions show up as updates automatically.
