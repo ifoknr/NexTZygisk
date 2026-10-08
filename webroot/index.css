@@ -116,9 +116,22 @@
   background: transparent;
 }
 
+/* INFO: Each visible nav item takes an equal share of the pill, so the four icons stay
+           evenly spaced and centered on phones, tablets and desktop alike. */
+#navbar > .navicon_support {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+
 #navbar label.radio {
-  display: block;
-  padding: 2px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 2px 0;
   cursor: pointer;
 }
 
@@ -164,10 +177,5 @@
   --tw-nav-width: 420px;
 }
 
-/* INFO: Tablets in portrait: keep the navbar items together instead of spreading them edge to edge. */
-@media (min-width: 600px) and (orientation: portrait) {
-  #navbar {
-    justify-content: center;
-    gap: clamp(40px, 9vw, 110px);
-  }
-}
+/* INFO: The equal-share items above already keep the bar tidy at every width, so the pill
+           stays the same compact size on tablets and desktop instead of stretching. */
