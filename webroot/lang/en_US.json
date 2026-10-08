@@ -266,7 +266,7 @@
       "save": "Save",
       "search": "Filter logs",
       "all": "All",
-      "empty": "No NextZygisk logs yet. Release builds only log info, warnings and errors.",
+      "empty": "No NextZygisk logs right now. Release builds log only when something happens (an app starts with a module, a warning, an error), and Android drops old log lines after a while. An empty list does not mean NextZygisk stopped: the Home page shows whether it works.",
       "saved": "Saved to {path}",
       "saveFailed": "Failed to save logs"
     }
