@@ -1,5 +1,9 @@
 # NextZygisk changelog
 
+## v1.0.5
+- WebUI: the bottom bar is even on tablets. A tablet-only rule spread the four icons so
+  far apart that Home and Settings fell outside the bar; each icon now takes an equal share.
+
 ## v1.0.4
 - Fixed: the paths in NextSUSFS's "Unmounted for apps" list were never unmounted. NextZygisk
   turns KernelSU's own umount off and unmounts root mounts itself, so KernelSU never applied
