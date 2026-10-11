@@ -66,8 +66,9 @@ static int rezygiskd_connect(uint8_t retry) {
     ret_type;                                      \
   }
 
-#define safe_read(fn, name, ret_type)               \
-  if (fn == -1) {                                   \
+/* INFO: read_loop returns a short count when ReZygiskd hangs up mid-value, so check the full size. */
+#define safe_read(fn, size, name, ret_type)         \
+  if (fn != (ssize_t)(size)) {                      \
     LOGE("Failed to read " name " from ReZygiskd"); \
                                                     \
     close(fd);                                      \
@@ -95,7 +96,7 @@ uint32_t rezygiskd_get_process_flags(uid_t uid, const char *const process) {
   safe_write(write_string(fd, process), "process name", return 0);
 
   uint32_t res = 0;
-  safe_read(read_uint32_t(fd, &res), "process flags", return 0);
+  safe_read(read_uint32_t(fd, &res), sizeof(res), "process flags", return 0);
 
   close(fd);
 
@@ -118,16 +119,16 @@ void rezygiskd_get_info(struct rezygisk_info *info) {
   safe_write(write_uint8_t(fd, (uint8_t)GetInfo), "GetInfo action", return);
 
   uint32_t flags = 0;
-  safe_read(read_uint32_t(fd, &flags), "info flags", return);
+  safe_read(read_uint32_t(fd, &flags), sizeof(flags), "info flags", return);
 
   if (flags & (1 << 28)) info->root_impl = ROOT_IMPL_APATCH;
   else if (flags & (1 << 29)) info->root_impl = ROOT_IMPL_KERNELSU;
   else if (flags & (1 << 30)) info->root_impl = ROOT_IMPL_MAGISK;
   else info->root_impl = ROOT_IMPL_NONE;
 
-  safe_read(read_uint32_t(fd, (uint32_t *)&info->pid), "pid", return);
+  safe_read(read_uint32_t(fd, (uint32_t *)&info->pid), sizeof(uint32_t), "pid", return);
 
-  safe_read(read_size_t(fd, &info->modules.modules_count), "modules count", return);
+  safe_read(read_size_t(fd, &info->modules.modules_count), sizeof(size_t), "modules count", return);
   if (info->modules.modules_count == 0) {
     info->modules.modules = NULL;
 
@@ -234,7 +235,7 @@ bool rezygiskd_read_modules(struct zygisk_modules *modules) {
   safe_write(write_uint8_t(fd, (uint8_t)ReadModules), "ReadModules action", return false);
 
   size_t len = 0;
-  safe_read(read_size_t(fd, &len), "modules count", return false);
+  safe_read(read_size_t(fd, &len), sizeof(len), "modules count", return false);
 
   modules->modules = malloc(len * sizeof(char *));
   if (!modules->modules) {
@@ -285,7 +286,7 @@ int rezygiskd_connect_companion(size_t index) {
   safe_write(write_size_t(fd, index), "companion index", return -1);
 
   uint8_t res = 0;
-  safe_read(read_uint8_t(fd, &res), "companion socket result", return -1);
+  safe_read(read_uint8_t(fd, &res), sizeof(res), "companion socket result", return -1);
 
   if (res == 1) return fd;
   else {
@@ -327,10 +328,10 @@ bool rezygiskd_update_mns(enum mount_namespace_state nms_state, char *buf, size_
   safe_write(write_uint8_t(fd, (uint8_t)nms_state), "mount namespace state", return false);
 
   uint32_t target_pid = 0;
-  safe_read(read_uint32_t(fd, &target_pid), "target pid", return false);
+  safe_read(read_uint32_t(fd, &target_pid), sizeof(target_pid), "target pid", return false);
 
   uint32_t target_fd = 0;
-  safe_read(read_uint32_t(fd, &target_fd), "target fd", return false);
+  safe_read(read_uint32_t(fd, &target_fd), sizeof(target_fd), "target fd", return false);
 
   if (target_fd == 0) {
     LOGE("Failed to get target fd");
@@ -355,7 +356,7 @@ bool rezygiskd_remove_module(size_t index) {
   safe_write(write_size_t(fd, index), "module index", return false);
 
   uint8_t res = 0;
-  safe_read(read_uint8_t(fd, &res), "remove module result", return false);
+  safe_read(read_uint8_t(fd, &res), sizeof(res), "remove module result", return false);
 
   close(fd);
 

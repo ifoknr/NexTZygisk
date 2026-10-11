@@ -9,6 +9,7 @@
 #include <sys/wait.h>
 
 #include <linux/limits.h>
+#include <sys/time.h>
 #include <time.h>
 #include <unistd.h>
 
@@ -234,7 +235,7 @@ static int spawn_companion(char *restrict argv[], char *restrict name, int lib_f
         return -2;
       }
       case 1: { return daemon_fd; }
-      /* TODO: Should we be closing daemon socket here? (in non-0-and-1 case) */
+      /* INFO: Unknown response, the companion is unusable, so release the socket. */
       default: {
         close(daemon_fd);
 
@@ -282,6 +283,18 @@ static int spawn_companion(char *restrict argv[], char *restrict name, int lib_f
   }
 
   exit(0);
+}
+
+/* INFO: ReZygiskd serves one client at a time, so a client that connects and then
+           stalls would block every app launch behind it. The timeout bounds that. */
+#define CLIENT_IO_TIMEOUT_SEC 2
+
+static void set_client_timeout(int fd, time_t seconds) {
+  struct timeval tv = { .tv_sec = seconds, .tv_usec = 0 };
+
+  if (setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) == -1 ||
+      setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv)) == -1)
+    LOGW("Failed setting client socket timeout: %s", strerror(errno));
 }
 
 /* WARNING: Dynamic memory based */
@@ -383,6 +396,8 @@ void zygiskd_start(char *restrict argv[]) {
 
       break;
     }
+
+    set_client_timeout(client_fd, CLIENT_IO_TIMEOUT_SEC);
 
     /* INFO: A single misbehaving client (e.g. killed between connect and write)
                must not stop ReZygiskd for every other process until reboot. */
@@ -603,6 +618,10 @@ void zygiskd_start(char *restrict argv[]) {
         */
         if (module->companion >= 0) {
           LOGI(" - Sending companion fd socket of module \"%s\"", module->name);
+
+          /* INFO: The module's companion owns this socket from now on and may wait on
+                     it for as long as it likes, so it must not inherit our timeout. */
+          set_client_timeout(client_fd, 0);
 
           if (write_fd(module->companion, client_fd) == -1) {
             LOGE(" - Failed to send companion fd socket of module \"%s\"", module->name);
