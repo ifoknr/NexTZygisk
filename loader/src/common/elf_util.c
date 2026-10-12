@@ -468,6 +468,11 @@ bool _load_symtabs(ElfImg *img) {
     }
   }
 
+  /* INFO: The fill loop can skip a symbol the count accepted (e.g. a name offset past the
+             string table when calculate_valid_symtabs_amount could not check it). Only
+             expose the slots actually filled, so lookups never read a NULL entry. */
+  img->symtabs_count_ = current_valid_index;
+
   return true;
 }
 
