@@ -1,5 +1,7 @@
 # NextZygisk changelog
 
+<!-- Each "## vX.Y.Z" section is the release notes and the Telegram post: the Arabic bullets, then a line "**English**" and the same bullets in English. Keep it short (about 760 characters). Commits show IFOKNR only. -->
+
 ## v1.0.5
 - WebUI: the bottom bar is even on tablets. A tablet-only rule spread the four icons so
   far apart that Home and Settings fell outside the bar; each icon now takes an equal share.
