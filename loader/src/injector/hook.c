@@ -963,7 +963,9 @@ static bool load_modules_only(void) {
            Zygote library and the available modules in ReZygiskd. */
       /* TODO: Update the list of modules for ReZygisk monitor, so that it can update
                  for WebUI. That is simply cosmetic, though. */
-      rezygiskd_remove_module(i);
+      /* INFO: Earlier removals shift ReZygiskd's list, so the failed module sits right
+                 after the ones loaded so far, not at its original index. */
+      rezygiskd_remove_module(zygisk_module_length);
 
       continue;
     }
@@ -974,7 +976,7 @@ static bool load_modules_only(void) {
 
       csoloader_unload(&zygisk_modules[zygisk_module_length].lib);
 
-      rezygiskd_remove_module(i);
+      rezygiskd_remove_module(zygisk_module_length);
 
       continue;
     }

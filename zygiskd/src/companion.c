@@ -70,7 +70,7 @@ void *entry_thread(void *arg) {
   */
   struct stat st1;
   if (fstat(fd, &st1) != -1 && st0.st_ino == st1.st_ino) {
-    LOGI(" - Client fd changed after module entry");
+    LOGI(" - Client fd still open after module entry, closing it");
 
     close(fd);
   }
@@ -158,7 +158,9 @@ void companion_entry(int fd) {
       free(args);
       close(client_fd);
 
-      break;
+      /* INFO: Only this client is gone (e.g. its app was killed). Exiting here would
+                 kill the threads still serving every other app, so keep going. */
+      continue;
     }
 
     pthread_t thread;
