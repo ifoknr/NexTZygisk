@@ -2,6 +2,22 @@
 
 <!-- Each "## vX.Y.Z" section is the release notes and the Telegram post: the Arabic bullets, then a line "**English**" and the same bullets in English. Keep it short (about 760 characters). Commits show IFOKNR only. -->
 
+## v1.0.6
+- إصلاح: لو فشلت وحدتان في التحميل، كان يتحذف العنصر الخطأ من قائمة ReZygiskd، فوحدة تكلّم companion ومجلد وحدة ثانية. الحين تُحذف بموقعها الصحيح.
+- إصلاح: تطبيق ينقتل قبل رد الـ companion كان يطفي الـ companion ومعه الـ threads اللي تخدم باقي التطبيقات. الحين يسكّر اتصاله هو بس ويكمّل.
+- إصلاح: عميل معلّق كان يوقف فتح كل التطبيقات لأن الـ daemon يخدم واحد في كل مرة بلا مهلة. أضفنا مهلة ثانيتين، تُشال قبل تسليم الاتصال للـ companion.
+- إصلاح: ردود الـ daemon صارت تُفحص للحجم الكامل، مو لـ-1 فقط، فقراءة ناقصة ما تُقبل كاملة.
+- إصلاح: خانات فاضية في جدول الرموز كانت تُقرأ في elf_util.c (اكتشفها make analyzer).
+- مزامنة مع ReZygisk: المفاتيح تحتفظ بحالتها بعد تغيير التبويب، بناء Termux، تحديث PLTI و CSOLoader، وأمر make analyzer.
+
+**English**
+- Fixed: with two modules failing to load, the wrong entry was removed from ReZygiskd's list, so a module talked to another module's companion and directory. It is now removed by its current index.
+- Fixed: a client that died before the companion's reply tore down the companion and the threads serving every other app. It now closes just that client and continues.
+- Fixed: a stalled client blocked all app launches, since the daemon serves one client at a time with no timeout. Added a 2s timeout, cleared before the socket is handed to a companion.
+- Fixed: daemon replies are checked for their full size, not only -1, so a short read is not accepted as complete.
+- Fixed: null symtab slots were dereferenced in elf_util.c (found by make analyzer).
+- Synced with ReZygisk: switches keep state after a tab change, Termux build, PLTI and CSOLoader bump, and a make analyzer target.
+
 ## v1.0.5
 - WebUI: the bottom bar is even on tablets. A tablet-only rule spread the four icons so
   far apart that Home and Settings fell outside the bar; each icon now takes an equal share.
