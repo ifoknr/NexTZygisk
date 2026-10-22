@@ -46,6 +46,19 @@
   background: var(--background);
 }
 
+.nz_header_brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.nz_header_logo {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
 .nz_header_title {
   font-size: 22px;
   font-weight: 600;
