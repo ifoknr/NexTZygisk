@@ -65,6 +65,8 @@
   letter-spacing: -0.2px;
 }
 
+.wm { display: block; height: 1em; overflow: visible; }
+
 .nz_header_sub {
   font-size: 12px;
   color: var(--desc);
