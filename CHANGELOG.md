@@ -2,6 +2,12 @@
 
 <!-- Each "## vX.Y.Z" section is the release notes and the Telegram post: the Arabic bullets, then a line "**English**" and the same bullets in English. Keep it short (about 760 characters). Commits show IFOKNR only. -->
 
+## v1.0.7
+- شكل جديد: أيقونة رمادية هادية مثل باقي أدوات IFOKNR، واسم الأداة بخط جديد فوق، وتوقيع IFOKNR في صفحة الحقوق.
+
+**English**
+- New look: a calm grey icon like the other IFOKNR tools, the name in new lettering at the top, and IFOKNR's signature in the credits.
+
 ## v1.0.6
 - إصلاح: لو فشلت وحدتان في التحميل، كان يتحذف العنصر الخطأ من قائمة ReZygiskd، فوحدة تكلّم companion ومجلد وحدة ثانية. الحين تُحذف بموقعها الصحيح.
 - إصلاح: تطبيق ينقتل قبل رد الـ companion كان يطفي الـ companion ومعه الـ threads اللي تخدم باقي التطبيقات. الحين يسكّر اتصاله هو بس ويكمّل.
