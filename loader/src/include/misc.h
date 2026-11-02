@@ -10,7 +10,7 @@
   #define LP_SELECT(lp32, lp64) lp32
 #endif
 
-#define APP_ID(uid) uid % 100000
+#define APP_ID(uid) ((uid) % 100000)
 
 #define IS_ISOLATED_SERVICE(uid)      \
   ((APP_ID(uid)) >= 90000)

@@ -57,7 +57,7 @@
     return_type;                                                                                                 \
   }
 
-#define APP_ID(uid) uid % 100000
+#define APP_ID(uid) ((uid) % 100000)
 
 #define IS_ISOLATED_SERVICE(uid)      \
   ((APP_ID(uid)) >= 90000)

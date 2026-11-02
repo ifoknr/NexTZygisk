@@ -2,6 +2,14 @@
 
 <!-- Each "## vX.Y.Z" section is the release notes and the Telegram post: the Arabic bullets, then a line "**English**" and the same bullets in English. Keep it short (about 760 characters). Commits show IFOKNR only. -->
 
+## v1.0.8
+- أمان: رسائل أخطاء الواجهة تُكتب للملف بدون ما تمر على الـ shell، فما يتنفّذ أي نص داخلها (كانت علامات التنصيص و $ تكسر الأمر أو تشغّله كـ root).
+- تحصين: حساب معرّف التطبيق لكل مستخدم صار آمن مع أي تعبير.
+
+**English**
+- Security: WebUI error messages are written to file without passing through the shell, so no text inside them can run (quotes and $ used to break the command or run it as root).
+- Hardening: the per-user app ID calculation is now safe with any expression.
+
 ## v1.0.7
 - شكل جديد: أيقونة رمادية هادية مثل باقي أدوات IFOKNR، واسم الأداة بخط جديد فوق، وتوقيع IFOKNR في صفحة الحقوق.
 
