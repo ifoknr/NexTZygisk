@@ -1,0 +1,184 @@
+/* INFO: Design 5, "mono instrument": the NEXT stack look shared with NextSUSFS and
+           NextWheel. Colours come from the theme files (js/themes); this layer squares
+           the components, swaps cards for hairline rules, sets monospace labels and
+           figures, and keeps one colour for status. Page stylesheets load after this
+           file, so component rules are scoped to #main_body to win over them. */
+:root {
+  --radius-l: 0px;
+  --radius-m: 0px;
+  --radius-s: 0px;
+  --mono: ui-monospace, 'Roboto Mono', 'DejaVu Sans Mono', monospace;
+  -webkit-tap-highlight-color: transparent;
+}
+html { touch-action: manipulation; }
+
+/* ---------- visible focus for keyboard and D-pad, never on a tap ---------- */
+#main_body :focus { outline: none; }
+#main_body :focus-visible { outline: 2px solid var(--font); outline-offset: 2px; }
+#main_body .nz_search:focus-within { outline: 2px solid var(--font); outline-offset: 2px; }
+#main_body .nz_switch input:focus-visible + span,
+#main_body .switch input:focus-visible + .slider,
+#main_body #navbar input:focus-visible + label { outline: 2px solid var(--font); outline-offset: 2px; }
+#main_body .nz_swatch:focus-visible { outline: 2px solid var(--font); outline-offset: 3px; }
+
+/* ---------- header ---------- */
+#main_body .nz_header { padding: 20px 16px 14px; border-bottom: 1px solid var(--outline); }
+#main_body .nz_header_title { font-size: 17px; }
+#main_body .nz_header_logo { width: 30px; height: 30px; }
+#main_body .nz_header_sub { font-family: var(--mono); font-size: 11px; }
+#main_body .nz .nz_icon_btn { width: 34px; height: 34px; border-radius: 0; background: none; border: 1px solid var(--outline); }
+#main_body .nz_icon_btn svg { width: 18px; height: 18px; }
+
+/* ---------- section labels ---------- */
+#main_body .nz_section { margin: 22px 16px 6px; font-family: var(--mono); font-size: 11px; font-weight: 400; }
+#main_body .nz_section_action {
+  font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .6px;
+  color: var(--font); background: none; border: 0; padding: 0; cursor: pointer;
+}
+
+/* ---------- rows instead of cards ---------- */
+#main_body .nz .nz_card {
+  background: none; border: 0; border-bottom: 1px solid var(--outline); border-radius: 0;
+  margin: 0 16px; padding: 14px 0;
+}
+#main_body .nz_card_tap:active { transform: none; background: rgba(127, 127, 127, .08); }
+
+/* ---------- status: big state word, one dot ---------- */
+#main_body .nz .nz_hero {
+  background: none; border: 0; border-bottom: 1px solid var(--outline);
+  margin: 0 16px; padding: 22px 0 18px; gap: 14px; align-items: flex-start; flex-wrap: wrap;
+}
+#main_body .nz_ring { width: 12px; height: 12px; margin-top: 24px; border-radius: 50%; background: rgb(var(--hero-rgb, var(--accent-rgb))); }
+#main_body .nz_ring svg, #main_body .nz_ring_center, #main_body .nz_hero[data-status="ok"] .nz_ring::after { display: none; }
+#main_body .nz_hero_title { font-size: 52px; font-weight: 300; letter-spacing: -1.5px; line-height: 1.05; }
+#main_body .nz_hero_sub { font-size: 13px; }
+/* the stat trio shows on phones too, as a ruled row under the status */
+#main_body .nz_hero_stats { display: flex; flex: 1 1 100%; border-top: 1px solid var(--outline); margin-top: 4px; }
+#main_body .nz_hero_stats .nz_hero_stat {
+  flex: 1; min-width: 0; padding: 14px 0 0 14px; border: 0; border-inline-start: 1px solid var(--outline);
+}
+#main_body .nz_hero_stats .nz_hero_stat:first-child { padding-inline-start: 0; border-inline-start: 0; }
+#main_body .nz_hero_stat_value { font-family: var(--mono); font-size: 25px; font-weight: 400; font-variant-numeric: tabular-nums; }
+#main_body .nz_hero_stat_label { font-family: var(--mono); font-size: 10.5px; color: var(--desc); margin-top: 4px; }
+
+/* ---------- pills, dots ---------- */
+#main_body .nz .nz_pill, #main_body .nz .nz_pill_ok, #main_body .nz .nz_pill_warn,
+#main_body .nz .nz_pill_err, #main_body .nz .nz_pill_muted {
+  border-radius: 0; background: none; border: 1px solid var(--outline); color: var(--desc);
+  font-family: var(--mono); font-weight: 400; font-size: 10.5px;
+}
+#main_body .nz .nz_pill_ok { color: var(--ok); }
+#main_body .nz .nz_pill_warn { color: var(--warn); }
+#main_body .nz .nz_pill_err { color: var(--err); }
+#main_body .nz .nz_dot_ok, #main_body .nz .nz_dot_warn, #main_body .nz .nz_dot_err { box-shadow: none; }
+
+/* ---------- ruled grids ---------- */
+#main_body .nz_grid {
+  gap: 0; margin: 0 16px; border-top: 1px solid var(--outline); border-inline-start: 1px solid var(--outline);
+}
+#main_body .nz .nz_tile {
+  border-radius: 0; background: none; border: 0; width: 100%; text-align: start;
+  border-bottom: 1px solid var(--outline); border-inline-end: 1px solid var(--outline);
+  font: inherit; color: inherit; cursor: default;
+}
+#main_body .nz .nz_tile.nz_card_tap { cursor: pointer; }
+#main_body .nz_tile_value { font-family: var(--mono); font-weight: 400; }
+
+/* ---------- key/value rows, banners ---------- */
+#main_body .nz_row { border-bottom-color: var(--outline); }
+#main_body .nz_row_value { font-family: var(--mono); font-size: 12.5px; color: var(--desc); }
+#main_body .nz .nz_banner, #main_body .nz .nz_banner_warn {
+  border-radius: 0; background: none; margin: 12px 16px; width: calc(100% - 32px); text-align: start;
+  font: inherit; color: inherit;
+}
+#main_body .nz .nz_banner_warn { border-color: var(--warn); }
+
+/* ---------- buttons, segments, action tiles ---------- */
+#main_body .nz_btn {
+  border-radius: 0; min-height: 36px; padding: 0 14px; font-family: var(--mono); font-size: 11.5px;
+  font-weight: 400; letter-spacing: .4px; text-transform: uppercase;
+}
+#main_body .nz_btn:active { transform: none; opacity: .8; }
+#main_body .nz .nz_btn_filled { background: var(--font); color: var(--background); }
+#main_body .nz .nz_btn_tonal, #main_body .nz .nz_btn_outline { background: none; color: var(--font); border: 1px solid var(--font); }
+#main_body .nz .nz_btn_danger { background: none; color: var(--err); border: 1px solid var(--err); }
+#main_body .nz .nz_segmented { border-radius: 0; border: 1px solid var(--outline); background: none; padding: 0; gap: 0; }
+#main_body .nz_segmented button { border-radius: 0; font-family: var(--mono); text-transform: uppercase; font-size: 12px; }
+#main_body .nz .nz_segmented button[aria-pressed="true"] { background: var(--font); color: var(--background); font-weight: 400; }
+#main_body .nz .nz_action {
+  border-radius: 0; background: none; border: 0; border-bottom: 1px solid var(--outline); box-shadow: none;
+}
+#main_body .nz_action:active { transform: none; background: rgba(127, 127, 127, .08); }
+#main_body .nz .nz_action_icon, #main_body .nz .nz_action_danger .nz_action_icon { background: none; border-radius: 0; }
+#main_body .nz_action_icon svg { fill: var(--font); }
+#main_body .nz_action_danger .nz_action_icon svg { fill: var(--err); }
+#main_body .nz_action_title { font-weight: 400; }
+
+/* ---------- search, modules, dialog ---------- */
+#main_body .nz .nz_search { border-radius: 0; background: none; border: 1px solid var(--outline); }
+#main_body .nz .nz_avatar { border-radius: 0; }
+#main_body .nz_module_name { font-weight: 400; }
+#main_body .nz .nz_home_module { width: 100%; text-align: start; font: inherit; color: inherit; background: none; border: 0; border-bottom: 1px solid var(--outline); }
+#main_body .nz .nz_home_module .nz_avatar { border-radius: 0; }
+#main_body .nz .nz_dialog { border-radius: 0; background: var(--background); border: 1px solid var(--font); box-shadow: none; }
+#main_body .nz_dialog_title { font-size: 17px; font-weight: 400; }
+#main_body .nz.nz_scrim { background: rgba(0, 0, 0, .74); overscroll-behavior: contain; }
+
+/* ---------- live log ---------- */
+#main_body .nz .nz_log_toolbar, #main_body .nz .nz_log_list { border-radius: 0; background: none; }
+#main_body .nz_level_chip { border-radius: 0; font-family: var(--mono); }
+#main_body .nz .nz_level_chip[aria-pressed="true"] { background: none; color: var(--font); border-color: var(--font); }
+#main_body .nz_log_tag { color: var(--desc); }
+#main_body .nz .nz_log_lvl, #main_body .nz .nz_log_V .nz_log_lvl, #main_body .nz .nz_log_D .nz_log_lvl,
+#main_body .nz .nz_log_I .nz_log_lvl, #main_body .nz .nz_log_W .nz_log_lvl,
+#main_body .nz .nz_log_E .nz_log_lvl, #main_body .nz .nz_log_F .nz_log_lvl { background: none; border-radius: 0; }
+
+/* ---------- settings: swatches, options, switches ---------- */
+#main_body .nz_swatch { border-radius: 0; }
+#main_body .nz .nz_option { border-radius: 0; background: none; border: 0; border-bottom: 1px solid var(--outline); }
+#main_body .nz .nz_option[aria-checked="true"] { background: none; box-shadow: none; }
+#main_body .nz .nz_radio { border-radius: 0; }
+#main_body .nz .nz_theme_preview, #main_body .nz .nz_lang_badge { border-radius: 0; }
+#main_body .nz_switch { width: 40px; height: 22px; }
+#main_body .nz .nz_switch span { border-radius: 0; background: none; border: 1px solid var(--desc); }
+#main_body .nz .nz_switch span::after { border-radius: 0; width: 14px; height: 14px; left: 3px; }
+#main_body .nz .nz_switch input:checked + span { background: var(--font); border-color: var(--font); }
+#main_body .nz .nz_switch input:checked + span::after { width: 14px; height: 14px; background: var(--background); transform: translate(18px, -50%); }
+#main_body .slider { border-radius: 0; }
+#main_body .slider:before { border-radius: 0; }
+#main_body .small_card, #main_body .language_card { border-radius: 0; }
+
+/* ---------- navbar: full-width ruled bar, short rule under the active tab ---------- */
+#main_body #navbar_support_div { padding: 0 0 var(--window-inset-bottom, 0px); }
+#main_body #navbar {
+  width: 100%; border-radius: 0; padding: 8px 12px 10px; background: var(--background);
+  border: 0; border-top: 1px solid var(--outline); box-shadow: none;
+}
+/* the radio stays focusable (keyboard / D-pad) instead of display: none */
+#main_body #navbar .navicon_support { position: relative; }
+#main_body .radios input[type=radio] {
+  display: block; position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none;
+}
+#main_body #navbar .navicon { display: none; }
+#main_body #navbar [id^="ni_"] { opacity: .55; }
+#main_body #navbar input[checked] + label [id^="ni_"] { opacity: 1; }
+#main_body #navbar .navtitle {
+  flex-direction: column; gap: 4px; font-family: var(--mono); font-size: 10px; letter-spacing: .4px;
+  text-transform: uppercase;
+}
+#main_body #navbar .navtitle::after { content: ""; width: 16px; height: 2px; background: transparent; }
+#main_body #navbar input[checked] + label .navtitle { font-weight: 400; }
+#main_body #navbar input[checked] + label .navtitle::after { background: var(--font); }
+
+/* ---------- motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  #main_body .page_loader_main_push, #main_body .page_loader_mini_in, #main_body .page_loader_mini_out,
+  #main_body .loader, #main_body .navicon { animation: none; }
+  #main_body .slider, #main_body .slider:before { transition: none; }
+}
+
+/* ---------- tablets ---------- */
+@media (min-width: 760px) {
+  #main_body .nz_hero_title { font-size: 64px; }
+  #main_body .nz_ring { width: 14px; height: 14px; margin-top: 30px; }
+}

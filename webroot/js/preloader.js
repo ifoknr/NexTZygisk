@@ -36,7 +36,7 @@ if (ConfigState.enableSystemFont) {
 
 /* INFO: This code are meant to load the link with any card have credit-link attribute inside it */
 document.addEventListener('click', async (event) => {
-  const getLink = event.target.getAttribute('credit-link')
+  const getLink = event.target.closest('[credit-link]')?.getAttribute('credit-link')
   if (!getLink || typeof getLink !== 'string') return;
 
   const ptrace64Cmd = await exec(`am start -a android.intent.action.VIEW -d https://${getLink}`).catch(() => {

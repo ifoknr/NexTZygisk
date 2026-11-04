@@ -58,14 +58,14 @@ function monitorLabel(state, strings) {
 
 function tile({ label, value, hint, tone, iconName, action }) {
   return `
-    <div class="nz_tile ${action ? 'nz_card_tap' : ''}" ${action ? `data-action="${action}"` : ''}>
+    <${action ? 'button type="button"' : 'div'} class="nz_tile ${action ? 'nz_card_tap' : ''}" ${action ? `data-action="${action}"` : ''}>
       <div class="nz_tile_label">${iconName ? icon(iconName) : ''}<span>${escapeHTML(label)}</span></div>
       <div class="nz_tile_value" style="display: flex; align-items: center; gap: 8px;">
         <span class="nz_dot ${tone ? `nz_dot_${tone}` : ''}"></span>
         <span style="overflow: hidden; text-overflow: ellipsis;">${escapeHTML(value)}</span>
       </div>
       ${hint ? `<div class="nz_tile_hint">${escapeHTML(hint)}</div>` : ''}
-    </div>
+    </${action ? 'button' : 'div'}>
   `
 }
 
@@ -173,14 +173,14 @@ function renderModulesOverview(modStrings) {
     const faded = mod.status === 'disabled' || mod.status === 'removal'
 
     return `
-      <div class="nz_home_module" data-action="modules">
+      <button type="button" class="nz_home_module" data-action="modules">
         <div class="nz_avatar" style="--hue: ${hueOf(mod.id)};${faded ? ' filter: grayscale(1); opacity: 0.6;' : ''}">${escapeHTML(mod.name.trim().charAt(0).toUpperCase() || '?')}</div>
         <div class="nz_module_body">
           <div class="nz_module_name">${escapeHTML(mod.name)}</div>
           <div class="nz_module_meta nz_mono"><bdi>${escapeHTML(mod.id)}</bdi></div>
         </div>
         <span class="nz_pill nz_pill_${tone}" style="flex-shrink: 0;"><span class="nz_dot ${tone === 'muted' ? '' : `nz_dot_${tone}`}"></span>${escapeHTML(modStrings.status[mod.status] || mod.status)}</span>
-      </div>
+      </button>
     `
   }).join('')
 }
@@ -227,10 +227,10 @@ function renderIssues(summary, strings) {
   }
 
   container.innerHTML = issues.map((issue) => `
-    <div class="nz_banner ${issue.tone === 'warn' ? 'nz_banner_warn' : ''} ${issue.action ? 'nz_card_tap' : ''}" ${issue.action ? `data-action="${issue.action}"` : ''}>
+    <${issue.action ? 'button type="button"' : 'div'} class="nz_banner ${issue.tone === 'warn' ? 'nz_banner_warn' : ''} ${issue.action ? 'nz_card_tap' : ''}" ${issue.action ? `data-action="${issue.action}"` : ''}>
       <div style="flex-shrink: 0; width: 22px; height: 22px; fill: ${issue.tone === 'warn' ? 'var(--warn)' : 'var(--err)'};">${icon(issue.tone === 'warn' ? 'warn' : 'error')}</div>
       <div><b>${escapeHTML(issue.title)}</b>${escapeHTML(issue.body)}</div>
-    </div>
+    </${issue.action ? 'button' : 'div'}>
   `).join('')
 }
 

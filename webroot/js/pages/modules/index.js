@@ -68,7 +68,7 @@ function moduleCard(mod, strings, index) {
   `).join('')
 
   return `
-    <div class="nz_card nz_card_tap" data-module="${escapeHTML(mod.id)}" data-open="${openCards.has(mod.id)}" style="animation-delay: ${Math.min(index, 12) * 30}ms;">
+    <div class="nz_card nz_card_tap" role="button" tabindex="0" aria-expanded="${openCards.has(mod.id)}" data-module="${escapeHTML(mod.id)}" data-open="${openCards.has(mod.id)}" style="animation-delay: ${Math.min(index, 12) * 30}ms;">
       <div class="nz_module">
         <div class="nz_avatar" style="--hue: ${hueOf(mod.id)};${mod.status === 'disabled' || mod.status === 'removal' ? ' filter: grayscale(1); opacity: 0.6;' : ''}">${escapeHTML(initial)}</div>
         <div class="nz_module_body">
@@ -226,9 +226,19 @@ export async function load() {
     const id = card.getAttribute('data-module')
     const open = card.getAttribute('data-open') !== 'true'
     card.setAttribute('data-open', open ? 'true' : 'false')
+    card.setAttribute('aria-expanded', open ? 'true' : 'false')
 
     if (open) openCards.add(id)
     else openCards.delete(id)
+  })
+
+  /* INFO: The card holds a button of its own, so it cannot be a <button>; Enter and
+             Space open it like a tap. */
+  utils.addListener(document.getElementById('modules_list'), 'keydown', (event) => {
+    if ((event.key !== 'Enter' && event.key !== ' ') || !event.target.matches('[data-module]')) return
+
+    event.preventDefault()
+    event.target.click()
   })
 
   if (modules.length || query) render(strings)

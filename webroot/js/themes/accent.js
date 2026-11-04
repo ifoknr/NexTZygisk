@@ -10,7 +10,7 @@ export const accentList = {
   coral:  { dark: '#fda4af', light: '#be123c' },
   purple: { dark: '#c4b5fd', light: '#6d28d9' },
   pink:   { dark: '#f9a8d4', light: '#be185d' },
-  mono:   { dark: '#e5e5e5', light: '#262626' }
+  mono:   { dark: '#e9e9e6', light: '#121212' }
 }
 
 function hexToRgb(hex) {
@@ -22,7 +22,8 @@ function hexToRgb(hex) {
 export function getAccent() {
   const accent = localStorage.getItem('/ReZygisk/accent')
 
-  return accentList[accent] ? accent : 'blue'
+  /* INFO: Ink (mono) is the NEXT stack look; a saved accent still wins. */
+  return accentList[accent] ? accent : 'mono'
 }
 
 export function isLightTheme() {
@@ -34,7 +35,7 @@ export function isLightTheme() {
 }
 
 export function applyAccent(accent = getAccent()) {
-  const palette = accentList[accent] || accentList.blue
+  const palette = accentList[accent] || accentList.mono
   const light = isLightTheme()
   const hex = light ? palette.light : palette.dark
   const [ r, g, b ] = hexToRgb(hex)
@@ -57,7 +58,7 @@ export function applyAccent(accent = getAccent()) {
     rootCss.style.setProperty('--warn-rgb', '180, 83, 9')
     rootCss.style.setProperty('--err', '#c62828')
     rootCss.style.setProperty('--err-rgb', '198, 40, 40')
-    rootCss.style.setProperty('--outline', 'rgba(0, 0, 0, 0.08)')
+    rootCss.style.setProperty('--outline', 'rgba(0, 0, 0, 0.14)')
   } else {
     rootCss.style.setProperty('--ok', '#3ddc84')
     rootCss.style.setProperty('--ok-rgb', '61, 220, 132')
@@ -65,7 +66,7 @@ export function applyAccent(accent = getAccent()) {
     rootCss.style.setProperty('--warn-rgb', '255, 183, 77')
     rootCss.style.setProperty('--err', '#ff6b6b')
     rootCss.style.setProperty('--err-rgb', '255, 107, 107')
-    rootCss.style.setProperty('--outline', 'rgba(255, 255, 255, 0.07)')
+    rootCss.style.setProperty('--outline', 'rgba(255, 255, 255, 0.12)')
   }
 
   return accent
