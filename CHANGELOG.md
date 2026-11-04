@@ -2,6 +2,16 @@
 
 <!-- Each "## vX.Y.Z" section is the release notes and the Telegram post: the Arabic bullets, then a line "**English**" and the same bullets in English. Keep it short (about 760 characters). Commits show IFOKNR only. -->
 
+## v1.0.9
+- شكل جديد (تصميم 5): حالة الأداة بخط كبير ونقطة لون وحدة، خطوط رفيعة بدل الكروت، مفاتيح وأزرار مربّعة، وأرقام بخط mono. داكن وفاتح، ونفس الشكل في أدوات NEXT الثلاث.
+- اللون الافتراضي صار أبيض/أسود (mono)؛ اللي اختار لون قبل يبقى عليه.
+- كل الأزرار صارت أزرار حقيقية تشتغل بالكيبورد وقارئ الشاشة، مع مؤشر تركيز واضح.
+
+**English**
+- New look (design 5): the state in large type with one status dot, hairline rules instead of cards, square switches and buttons, monospace figures. Dark and light, the same across all three NEXT tools.
+- The default accent is now mono (ink); an accent you already picked stays.
+- Every button is a real button that works with a keyboard and screen readers, with a visible focus ring.
+
 ## v1.0.8
 - أمان: رسائل أخطاء الواجهة تُكتب للملف بدون ما تمر على الـ shell، فما يتنفّذ أي نص داخلها (كانت علامات التنصيص و $ تكسر الأمر أو تشغّله كـ root).
 - تحصين: حساب معرّف التطبيق لكل مستخدم صار آمن مع أي تعبير.
