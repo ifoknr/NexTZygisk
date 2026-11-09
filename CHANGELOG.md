@@ -2,6 +2,16 @@
 
 <!-- Each "## vX.Y.Z" section is the release notes and the Telegram post: the Arabic bullets, then a line "**English**" and the same bullets in English. Keep it short (about 760 characters). Commits show IFOKNR only. -->
 
+## v1.0.10
+- تحديثات من ReZygisk: إصلاح حرج، دالة تجميع المكتبات كانت تتوقف بدري بسبب EACCES لو انسحب الروت فتفشل كل الـPLT hooks.
+- تحسين إخفاء الكشف: تخصيص الذاكرة في العناوين العالية (PLTI وCSOLoader) وتجميع المكتبات من CSOLoader والـlinker وReZygisk نفسه بدل قراءة maps.
+- إصلاح: مفاتيح الإعدادات في الواجهة تحتفظ بحالتها الحقيقية بعد تغيير التبويب. تحديث تحليل الكود الثابت ومكتبات البناء.
+
+**English**
+- From ReZygisk: critical fix, the library collector stopped early on EACCES after root was lost, which failed every PLT hook.
+- Better detection hiding: memory allocated in high address regions (PLTI, CSOLoader), and libraries gathered from CSOLoader, the linker and ReZygisk itself instead of parsing maps.
+- Fix: settings switches keep their real state after changing tabs. Static-analysis target and build toolchain updates.
+
 ## v1.0.9
 - شكل جديد (تصميم 5): حالة الأداة بخط كبير ونقطة لون وحدة، خطوط رفيعة بدل الكروت، مفاتيح وأزرار مربّعة، وأرقام بخط mono. داكن وفاتح، ونفس الشكل في أدوات NEXT الثلاث.
 - اللون الافتراضي صار أبيض/أسود (mono)؛ اللي اختار لون قبل يبقى عليه.
